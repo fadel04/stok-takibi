@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'fs/promises'
+import { readFile } from 'fs/promises'
 import { join } from 'path'
 
 interface LoginUser {
@@ -17,12 +17,19 @@ interface LoginUser {
 const USERS_FILE = join(process.cwd(), 'server', 'data', 'users.json')
 
 async function loadUsers(): Promise<LoginUser[]> {
-  const data = await readFile(USERS_FILE, 'utf-8')
-  return JSON.parse(data)
-}
-
-async function saveUsers(users: LoginUser[]) {
-  await writeFile(USERS_FILE, JSON.stringify(users, null, 2))
+  try {
+    const data = await readFile(USERS_FILE, 'utf-8')
+    return JSON.parse(data)
+  } catch (error) {
+    // Fallback للإنتاج: مستخدم افتراضي
+    return [{
+      id: 1,
+      email: 'admin@example.com',
+      password: 'admin123',
+      name: 'Admin',
+      username: 'admin'
+    }]
+  }
 }
 
 export default defineEventHandler(async (event) => {

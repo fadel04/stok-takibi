@@ -68,7 +68,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     <div class="w-full max-w-md">
       <!-- Logo ve Başlık -->
       <div class="text-center mb-8">
-        <div class="flex justify-center mb-4">
+        <div class="flex justify-center items-center gap-4 mb-4">
+          <img src="/logo.png" alt="Stok Takibi" class="h-20 w-20 object-contain">
           <div class="p-3 rounded-full bg-primary/10 dark:bg-primary/20">
             <UIcon name="i-lucide-package" class="size-8 text-primary" />
           </div>

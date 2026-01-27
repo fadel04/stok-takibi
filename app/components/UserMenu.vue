@@ -46,8 +46,7 @@ function handleLogout() {
 
 const items = computed<DropdownMenuItem[][]>(() => ([[{
   type: 'label',
-  label: user.value.name,
-  avatar: user.value.avatar
+  label: user.value.name
 }], [{
   label: 'Ayarlar',
   icon: 'i-lucide-settings',

@@ -1,51 +1,40 @@
-import { readFile } from 'fs/promises'
-import { join } from 'path'
+import { db } from '~/server/db'
+import { users } from '~/server/db/schema'
+import { eq } from 'drizzle-orm'
 
 interface LoginUser {
   id: number
   email: string
   password: string
   name: string
-  username?: string
-  bio?: string
-  avatar?: {
-    src: string
-    alt: string
-  }
-}
-
-const USERS_FILE = join(process.cwd(), 'server', 'data', 'users.json')
-
-async function loadUsers(): Promise<LoginUser[]> {
-  try {
-    const data = await readFile(USERS_FILE, 'utf-8')
-    return JSON.parse(data)
-  } catch (error) {
-    // Fallback للإنتاج: مستخدم افتراضي
-    return [{
-      id: 1,
-      email: 'admin@example.com',
-      password: 'admin123',
-      name: 'Admin',
-      username: 'admin'
-    }]
-  }
+  username?: string | null
+  bio?: string | null
+  avatarSrc?: string | null
+  avatarAlt?: string | null
 }
 
 export default defineEventHandler(async (event) => {
   const method = event.node.req.method
 
   if (method === 'GET') {
-    const users = await loadUsers()
-    return users.map(({ password, ...user }) => user)
+    const allUsers = await db.select({
+      id: users.id,
+      email: users.email,
+      name: users.name,
+      username: users.username,
+      bio: users.bio,
+      avatarSrc: users.avatarSrc,
+      avatarAlt: users.avatarAlt
+    }).from(users)
+
+    return allUsers
   }
 
   if (method === 'POST') {
     const body = await readBody(event)
-    const users = await loadUsers()
-    const user = users.find(u => u.email === body.email && u.password === body.password)
+    const user = await db.select().from(users).where(eq(users.email, body.email)).get()
 
-    if (user) {
+    if (user && user.password === body.password) {
       const { password, ...userWithoutPassword } = user
       return { success: true, user: userWithoutPassword }
     }
@@ -58,39 +47,46 @@ export default defineEventHandler(async (event) => {
 
   if (method === 'PUT') {
     const body = await readBody(event)
-    const users = await loadUsers()
-    const userIndex = users.findIndex(u => u.id === body.id)
 
-    if (userIndex === -1) {
+    const existingUser = await db.select().from(users).where(eq(users.id, body.id)).get()
+    if (!existingUser) {
       throw createError({
         statusCode: 404,
         statusMessage: 'User not found'
       })
     }
 
-    const emailExists = users.some(u => u.email === body.email && u.id !== body.id)
-    if (emailExists) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'E-posta zaten kullanılıyor'
-      })
+    if (body.email !== existingUser.email) {
+      const emailExists = await db.select().from(users).where(eq(users.email, body.email)).get()
+      if (emailExists) {
+        throw createError({
+          statusCode: 400,
+          statusMessage: 'E-posta zaten kullanılıyor'
+        })
+      }
     }
 
-    users[userIndex] = {
-      ...users[userIndex],
-      name: body.name || users[userIndex].name,
-      email: body.email || users[userIndex].email,
-      username: body.username || users[userIndex].username,
+    await db.update(users).set({
+      name: body.name || existingUser.name,
+      email: body.email || existingUser.email,
+      username: body.username || existingUser.username,
       bio: body.bio,
-      avatar: body.avatar || users[userIndex].avatar,
-      password: body.password || users[userIndex].password
-    }
+      avatarSrc: body.avatar?.src || existingUser.avatarSrc,
+      avatarAlt: body.avatar?.alt || existingUser.avatarAlt,
+      password: body.password || existingUser.password
+    }).where(eq(users.id, body.id))
 
-    await saveUsers(users)
+    const updatedUser = await db.select().from(users).where(eq(users.id, body.id)).get()
+    const { password, ...userWithoutPassword } = updatedUser!
 
-    const { password, ...userWithoutPassword } = users[userIndex]
     return { success: true, user: userWithoutPassword }
   }
+
+  throw createError({
+    statusCode: 405,
+    statusMessage: 'Method not allowed'
+  })
+})
 
   throw createError({
     statusCode: 405,

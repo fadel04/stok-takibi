@@ -1,5 +1,6 @@
-import { readFileSync, writeFileSync } from 'fs'
-import { resolve } from 'path'
+import { db } from '~/server/db'
+import { products } from '~/server/db/schema'
+import { eq } from 'drizzle-orm'
 
 interface Product {
   id: number
@@ -7,83 +8,80 @@ interface Product {
   description: string
   price: number
   stock: number
-  category: string
-  createdAt: string
-}
-
-function getProductsPath() {
-  return resolve(process.cwd(), 'server/data/products.json')
-}
-
-function readProducts(): Product[] {
-  try {
-    const data = readFileSync(getProductsPath(), 'utf-8')
-    return JSON.parse(data)
-  } catch {
-    return []
-  }
-}
-
-function writeProducts(products: Product[]) {
-  writeFileSync(getProductsPath(), JSON.stringify(products, null, 2))
+  category: string | null
+  size?: string | null
+  createdAt: string | null
 }
 
 export default defineEventHandler(async (event) => {
   const method = event.node.req.method
 
   if (method === 'GET') {
-    const products = readProducts()
-    return products
+    const allProducts = await db.select().from(products)
+    return allProducts.map(p => ({
+      ...p,
+      price: parseFloat(p.price as any),
+      createdAt: p.createdAt || new Date().toISOString().split('T')[0]
+    }))
   }
 
   if (method === 'POST') {
     const body = await readBody<Omit<Product, 'id' | 'createdAt'>>(event)
-    const products = readProducts()
 
-    const newProduct: Product = {
-      id: Math.max(...products.map(p => p.id), 0) + 1,
-      ...body,
+    const result = await db.insert(products).values({
+      name: body.name,
+      description: body.description,
+      price: body.price,
+      stock: body.stock,
+      category: body.category,
+      size: body.size,
       createdAt: new Date().toISOString().split('T')[0]
-    }
+    }).returning()
 
-    products.push(newProduct)
-    writeProducts(products)
-
-    return { success: true, product: newProduct }
+    return { success: true, product: result[0] }
   }
 
   if (method === 'PUT') {
     const body = await readBody<Product>(event)
-    const products = readProducts()
-    const index = products.findIndex(p => p.id === body.id)
 
-    if (index === -1) {
+    const existing = await db.select().from(products).where(eq(products.id, body.id)).get()
+    if (!existing) {
       throw createError({
         statusCode: 404,
         statusMessage: 'Ürün bulunamadı'
       })
     }
 
-    products[index] = body
-    writeProducts(products)
+    await db.update(products).set({
+      name: body.name,
+      description: body.description,
+      price: body.price,
+      stock: body.stock,
+      category: body.category,
+      size: body.size
+    }).where(eq(products.id, body.id))
 
-    return { success: true, product: body }
+    const updated = await db.select().from(products).where(eq(products.id, body.id)).get()
+    return { success: true, product: updated }
   }
 
   if (method === 'DELETE') {
     const id = getQuery(event).id as string
-    const products = readProducts()
-    const filteredProducts = products.filter(p => p.id !== parseInt(id))
 
-    if (filteredProducts.length === products.length) {
+    const existing = await db.select().from(products).where(eq(products.id, parseInt(id))).get()
+    if (!existing) {
       throw createError({
         statusCode: 404,
         statusMessage: 'Ürün bulunamadı'
       })
     }
 
-    writeProducts(filteredProducts)
-
+    await db.delete(products).where(eq(products.id, parseInt(id)))
     return { success: true, message: 'Ürün silindi' }
   }
+
+  throw createError({
+    statusCode: 405,
+    statusMessage: 'Method not allowed'
+  })
 })

@@ -21,8 +21,6 @@ onMounted(() => {
   } else {
     profile.name = currentUser.value.name || ''
     profile.email = currentUser.value.email || ''
-    profile.username = currentUser.value.username || ''
-    profile.bio = currentUser.value.bio
   }
 })
 
@@ -141,7 +139,7 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
         />
       </UFormField>
       <USeparator />
-      <UFormField
+      <!-- <UFormField
         name="bio"
         label="Biyografi"
         description="Profiliniz için kısa açıklama. URL'ler hiper bağlantılıdır."
@@ -154,7 +152,7 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
           autoresize
           class="w-full"
         />
-      </UFormField>
+      </UFormField> -->
     </UPageCard>
   </UForm>
 </template>

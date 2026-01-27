@@ -1,5 +1,6 @@
-import { readFileSync, writeFileSync } from 'fs'
-import { resolve } from 'path'
+import { db } from '../db'
+import { invoices } from '../db/schema'
+import { eq } from 'drizzle-orm'
 
 interface InvoiceItem {
   description: string
@@ -9,98 +10,90 @@ interface InvoiceItem {
 }
 
 export interface Invoice {
-  id: string
-  customerId: number
+  id: number
   customerName: string
-  amount: number
-  currency: string
-  status: 'paid' | 'pending' | 'overdue'
-  issueDate: string
-  dueDate: string
-  paidDate: string | null
-  items: InvoiceItem[]
-  notes: string
-}
-
-function getInvoicesPath() {
-  return resolve(process.cwd(), 'server/data/invoices.json')
-}
-
-function readInvoices(): Invoice[] {
-  try {
-    const data = readFileSync(getInvoicesPath(), 'utf-8')
-    return JSON.parse(data)
-  } catch {
-    return []
-  }
-}
-
-function writeInvoices(invoices: Invoice[]) {
-  writeFileSync(getInvoicesPath(), JSON.stringify(invoices, null, 2))
+  customerEmail: string | null
+  customerPhone: string | null
+  totalAmount: number
+  status: string
+  createdAt: string | null
+  items: string
 }
 
 export default defineEventHandler(async (event) => {
   const method = event.node.req.method
 
   if (method === 'GET') {
-    const invoices = readInvoices()
+    const allInvoices = await db.select().from(invoices)
     const status = getQuery(event).status as string | undefined
 
     if (status) {
-      return invoices.filter(inv => inv.status === status)
+      return allInvoices.filter(inv => inv.status === status)
     }
 
-    return invoices
+    return allInvoices.map(inv => ({
+      ...inv,
+      items: JSON.parse(inv.items),
+      totalAmount: parseFloat(inv.totalAmount as any)
+    }))
   }
 
   if (method === 'POST') {
-    const body = await readBody<Omit<Invoice, 'id'>>(event)
-    const invoices = readInvoices()
+    const body = await readBody(event)
 
-    const newId = Math.max(...invoices.map(inv => parseInt(inv.id.split('-')[2])), 0) + 1
-    const newInvoice: Invoice = {
-      id: `INV-${new Date().getFullYear()}-${String(newId).padStart(3, '0')}`,
-      ...body
-    }
+    const result = await db.insert(invoices).values({
+      customerName: body.customerName,
+      customerEmail: body.customerEmail,
+      customerPhone: body.customerPhone,
+      totalAmount: body.totalAmount,
+      status: body.status || 'pending',
+      items: JSON.stringify(body.items)
+    }).returning()
 
-    invoices.push(newInvoice)
-    writeInvoices(invoices)
-
-    return { success: true, invoice: newInvoice }
+    return { success: true, invoice: result[0] }
   }
 
   if (method === 'PUT') {
-    const body = await readBody<Invoice>(event)
-    const invoices = readInvoices()
-    const index = invoices.findIndex(inv => inv.id === body.id)
+    const body = await readBody(event)
 
-    if (index === -1) {
+    const existing = await db.select().from(invoices).where(eq(invoices.id, body.id)).get()
+    if (!existing) {
       throw createError({
         statusCode: 404,
         statusMessage: 'Fatura bulunamadı'
       })
     }
 
-    invoices[index] = body
-    writeInvoices(invoices)
+    await db.update(invoices).set({
+      customerName: body.customerName,
+      customerEmail: body.customerEmail,
+      customerPhone: body.customerPhone,
+      totalAmount: body.totalAmount,
+      status: body.status,
+      items: JSON.stringify(body.items)
+    }).where(eq(invoices.id, body.id))
 
-    return { success: true, invoice: body }
+    const updated = await db.select().from(invoices).where(eq(invoices.id, body.id)).get()
+    return { success: true, invoice: updated }
   }
 
   if (method === 'DELETE') {
     const id = getQuery(event).id as string
-    const invoices = readInvoices()
-    const filteredInvoices = invoices.filter(inv => inv.id !== id)
 
-    if (filteredInvoices.length === invoices.length) {
+    const existing = await db.select().from(invoices).where(eq(invoices.id, parseInt(id))).get()
+    if (!existing) {
       throw createError({
         statusCode: 404,
         statusMessage: 'Fatura bulunamadı'
       })
     }
 
-    writeInvoices(filteredInvoices)
-
+    await db.delete(invoices).where(eq(invoices.id, parseInt(id)))
     return { success: true, message: 'Fatura silindi' }
   }
+
+  throw createError({
+    statusCode: 405,
+    statusMessage: 'Method not allowed'
+  })
 })

@@ -1,5 +1,5 @@
-import { db } from '~/server/db'
-import { users } from '~/server/db/schema'
+import { db } from '../db'
+import { users } from '../db/schema'
 import { eq } from 'drizzle-orm'
 
 interface LoginUser {
@@ -81,12 +81,6 @@ export default defineEventHandler(async (event) => {
 
     return { success: true, user: userWithoutPassword }
   }
-
-  throw createError({
-    statusCode: 405,
-    statusMessage: 'Method not allowed'
-  })
-})
 
   throw createError({
     statusCode: 405,

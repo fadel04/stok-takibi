@@ -1,5 +1,5 @@
-import { db } from '~/server/db'
-import { transactions } from '~/server/db/schema'
+import { db } from '../../db'
+import { transactions } from '../../db/schema'
 import type { Transaction } from '~/types'
 
 export default defineEventHandler(async (event) => {

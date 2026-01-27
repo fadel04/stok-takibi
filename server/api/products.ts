@@ -1,5 +1,5 @@
-import { db } from '~/server/db'
-import { products } from '~/server/db/schema'
+import { db } from '../db'
+import { products } from '../db/schema'
 import { eq } from 'drizzle-orm'
 
 interface Product {

@@ -6,9 +6,7 @@ export const users = sqliteTable('users', {
   password: text('password').notNull(),
   name: text('name').notNull(),
   username: text('username'),
-  bio: text('bio'),
-  avatarSrc: text('avatar_src'),
-  avatarAlt: text('avatar_alt')
+  bio: text('bio')
 })
 
 export const products = sqliteTable('products', {

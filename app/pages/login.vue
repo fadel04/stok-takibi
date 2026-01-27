@@ -29,7 +29,7 @@ const isLoading = ref(false)
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   isLoading.value = true
   try {
-    const { data } = await useFetch<{ success: boolean; user: LoginUser }>('/api/users', {
+    const { data } = await useFetch<{ success: boolean, user: LoginUser }>('/api/users', {
       method: 'POST',
       body: {
         email: event.data.email,
@@ -38,25 +38,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     })
 
     if (data.value?.success) {
-      let user = { ...data.value.user }
-
-      try {
-        const savedProfile = await $fetch<any>('/api/user-profile', {
-          query: { email: user.email }
-        })
-
-        if (savedProfile) {
-          user = {
-            ...user,
-            avatar: savedProfile.avatar || user.avatar,
-            bio: savedProfile.bio || user.bio,
-            username: savedProfile.username || user.username
-          }
-        }
-      } catch (error) {
-        console.log('No saved profile found')
-      }
-
+      const user = { ...data.value.user }
       setUser(user)
 
       toast.add({

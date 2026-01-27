@@ -4,10 +4,10 @@ defineProps<{
 }>()
 
 const team = {
-  label: 'Nuxt',
+  label: 'Stok Takibi',
   avatar: {
-    src: 'https://github.com/nuxt.png',
-    alt: 'Nuxt'
+    src: '/logo.png',
+    alt: 'Stok Takibi'
   }
 }
 </script>

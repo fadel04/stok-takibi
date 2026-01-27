@@ -9,8 +9,6 @@ interface LoginUser {
   name: string
   username?: string | null
   bio?: string | null
-  avatarSrc?: string | null
-  avatarAlt?: string | null
 }
 
 export default defineEventHandler(async (event) => {
@@ -22,9 +20,7 @@ export default defineEventHandler(async (event) => {
       email: users.email,
       name: users.name,
       username: users.username,
-      bio: users.bio,
-      avatarSrc: users.avatarSrc,
-      avatarAlt: users.avatarAlt
+      bio: users.bio
     }).from(users)
 
     return allUsers
@@ -71,8 +67,6 @@ export default defineEventHandler(async (event) => {
       email: body.email || existingUser.email,
       username: body.username || existingUser.username,
       bio: body.bio,
-      avatarSrc: body.avatar?.src || existingUser.avatarSrc,
-      avatarAlt: body.avatar?.alt || existingUser.avatarAlt,
       password: body.password || existingUser.password
     }).where(eq(users.id, body.id))
 

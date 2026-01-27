@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui'
-import type { LoginUser } from '~/types'
 
 defineProps<{
   collapsed?: boolean
@@ -17,16 +16,16 @@ const neutrals = ['slate', 'gray', 'zinc', 'neutral', 'stone']
 
 const user = computed(() => {
   if (currentUser.value) {
-    return currentUser.value
+    return {
+      ...currentUser.value,
+      label: currentUser.value.name
+    }
   }
   return {
     id: 0,
     name: 'Kullanıcı',
     email: 'user@example.com',
-    avatar: {
-      src: 'https://i.pravatar.cc/128?u=user',
-      alt: 'User'
-    }
+    label: 'Kullanıcı'
   }
 })
 
@@ -135,12 +134,8 @@ const items = computed<DropdownMenuItem[][]>(() => ([[{
     :ui="{ content: collapsed ? 'w-48' : 'w-(--reka-dropdown-menu-trigger-width)' }"
   >
     <UButton
-      v-bind="{
-        ...user,
-        avatar: user?.avatar,
-        label: collapsed ? undefined : user?.name,
-        trailingIcon: collapsed ? undefined : 'i-lucide-chevrons-up-down'
-      }"
+      :label="collapsed ? undefined : user?.name"
+      :trailing-icon="collapsed ? undefined : 'i-lucide-chevrons-up-down'"
       color="neutral"
       variant="ghost"
       block

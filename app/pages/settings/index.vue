@@ -21,6 +21,7 @@ onMounted(() => {
   } else {
     profile.name = currentUser.value.name || ''
     profile.email = currentUser.value.email || ''
+    profile.username = currentUser.value.username || ''
   }
 })
 

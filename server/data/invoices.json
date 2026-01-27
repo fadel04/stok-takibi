@@ -1,0 +1,88 @@
+[
+  {
+    "id": "INV-2024-002",
+    "customerId": 2,
+    "customerName": "Tech Solutions Ltd",
+    "amount": 5800,
+    "currency": "USD",
+    "status": "pending",
+    "issueDate": "2024-01-15",
+    "dueDate": "2024-02-15",
+    "paidDate": null,
+    "items": [
+      {
+        "description": "Danışmanlık Hizmetleri",
+        "quantity": 40,
+        "unitPrice": 150,
+        "total": 6000
+      }
+    ],
+    "notes": "Ödeme bekleniyor"
+  },
+  {
+    "id": "INV-2024-003",
+    "customerId": 3,
+    "customerName": "Digital Marketing Pro",
+    "amount": 1200,
+    "currency": "USD",
+    "status": "overdue",
+    "issueDate": "2023-12-15",
+    "dueDate": "2024-01-15",
+    "paidDate": null,
+    "items": [
+      {
+        "description": "Sosyal Medya Yönetimi (3 ay)",
+        "quantity": 3,
+        "unitPrice": 400,
+        "total": 1200
+      }
+    ],
+    "notes": "Vadesini geçmiş fatura"
+  },
+  {
+    "id": "INV-2024-004",
+    "customerId": 1,
+    "customerName": "Acme Corporation",
+    "amount": 3500,
+    "currency": "USD",
+    "status": "paid",
+    "issueDate": "2024-01-20",
+    "dueDate": "2024-02-20",
+    "paidDate": "2024-02-10",
+    "items": [
+      {
+        "description": "Donanım Satışı",
+        "quantity": 2,
+        "unitPrice": 1500,
+        "total": 3000
+      },
+      {
+        "description": "Kurulum ve Yapılandırma",
+        "quantity": 1,
+        "unitPrice": 500,
+        "total": 500
+      }
+    ],
+    "notes": "Teslim alındı ve yüklendi"
+  },
+  {
+    "id": "INV-2024-005",
+    "customerId": 4,
+    "customerName": "Global Industries",
+    "amount": 7200,
+    "currency": "USD",
+    "status": "pending",
+    "issueDate": "2024-01-25",
+    "dueDate": "2024-02-25",
+    "paidDate": null,
+    "items": [
+      {
+        "description": "Özel Yazılım Geliştirme",
+        "quantity": 48,
+        "unitPrice": 150,
+        "total": 7200
+      }
+    ],
+    "notes": "Proje tamamlandı, ödeme bekleniyor"
+  }
+]

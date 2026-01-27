@@ -1,0 +1,296 @@
+[
+  {
+    "id": 42,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "27.01.2026 16:52:20",
+    "action": "Ürün Güncellendi",
+    "description": "Ürün güncellendi: pantolon"
+  },
+  {
+    "id": 41,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "27.01.2026 16:42:18",
+    "action": "Stok Çıkışı",
+    "description": "pantolon: 997 → 747 (-250)"
+  },
+  {
+    "id": 40,
+    "username": "Test Kullanıcısı",
+    "timestamp": "27.01.2026 16:33:52",
+    "action": "Ürün Güncellendi",
+    "description": "Ürün güncellendi: tshort"
+  },
+  {
+    "id": 39,
+    "username": "Test Kullanıcısı",
+    "timestamp": "27.01.2026 16:33:40",
+    "action": "Ürün Güncellendi",
+    "description": "Ürün güncellendi: pantolon"
+  },
+  {
+    "id": 38,
+    "username": "Test Kullanıcısı",
+    "timestamp": "27.01.2026 16:33:19",
+    "action": "Ürün Güncellendi",
+    "description": "Ürün güncellendi: Mechanical Keyboard RGB"
+  },
+  {
+    "id": 37,
+    "username": "Test Kullanıcısı",
+    "timestamp": "27.01.2026 16:33:02",
+    "action": "Ürün Güncellendi",
+    "description": "Ürün güncellendi: test"
+  },
+  {
+    "id": 36,
+    "username": "Test Kullanıcısı",
+    "timestamp": "27.01.2026 16:32:48",
+    "action": "Ürün Güncellendi",
+    "description": "Ürün güncellendi: 4K Monitor LG"
+  },
+  {
+    "id": 35,
+    "username": "Fadel",
+    "timestamp": "27.01.2026 15:47:55",
+    "action": "Ürün Güncellendi",
+    "description": "Ürün güncellendi: tshort"
+  },
+  {
+    "id": 34,
+    "username": "Fadel",
+    "timestamp": "27.01.2026 15:47:34",
+    "action": "Ürün Güncellendi",
+    "description": "Ürün güncellendi: Mechanical Keyboard RGB"
+  },
+  {
+    "id": 33,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "27.01.2026 13:13:43",
+    "action": "Stok Çıkışı",
+    "description": "pantolon: 1497 → 997 (-500)"
+  },
+  {
+    "id": 32,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "27.01.2026 12:54:35",
+    "action": "Ürün Güncellendi",
+    "description": "Ürün güncellendi: Mechanical Keyboard RGB"
+  },
+  {
+    "id": 31,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "27.01.2026 12:54:23",
+    "action": "Ürün Güncellendi",
+    "description": "Ürün güncellendi: Mechanical Keyboard RGB"
+  },
+  {
+    "id": 30,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "27.01.2026 12:51:17",
+    "action": "Ürün Güncellendi",
+    "description": "Ürün güncellendi: test"
+  },
+  {
+    "id": 29,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "27.01.2026 12:51:03",
+    "action": "Ürün Eklendi",
+    "description": "Yeni ürün eklendi: test"
+  },
+  {
+    "id": 28,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "27.01.2026 08:23:07",
+    "action": "Stok Çıkışı",
+    "description": "Mechanical Keyboard RGB: 33 → 3 (-30)"
+  },
+  {
+    "id": 27,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "26.01.2026 14:18:17",
+    "action": "Ürün Eklendi",
+    "description": "Yeni ürün eklendi: tshort"
+  },
+  {
+    "id": 26,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "26.01.2026 14:15:37",
+    "action": "Stok Güncellendi",
+    "description": "Mechanical Keyboard RGB: 34 → 33 (-1)"
+  },
+  {
+    "id": 25,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "26.01.2026 14:15:35",
+    "action": "Stok Güncellendi",
+    "description": "Mechanical Keyboard RGB: 33 → 34 (+1)"
+  },
+  {
+    "id": 24,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "26.01.2026 14:15:00",
+    "action": "Stok Güncellendi",
+    "description": "pantolon: 1498 → 1497 (-1)"
+  },
+  {
+    "id": 23,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "26.01.2026 14:15:00",
+    "action": "Stok Güncellendi",
+    "description": "pantolon: 1499 → 1498 (-1)"
+  },
+  {
+    "id": 22,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "26.01.2026 14:15:00",
+    "action": "Stok Güncellendi",
+    "description": "pantolon: 1500 → 1499 (-1)"
+  },
+  {
+    "id": 21,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "26.01.2026 14:14:59",
+    "action": "Stok Güncellendi",
+    "description": "pantolon: 1501 → 1500 (-1)"
+  },
+  {
+    "id": 20,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "26.01.2026 14:14:59",
+    "action": "Stok Güncellendi",
+    "description": "pantolon: 1500 → 1501 (+1)"
+  },
+  {
+    "id": 19,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "26.01.2026 14:13:09",
+    "action": "Ürün Eklendi",
+    "description": "Yeni ürün eklendi: pantolon"
+  },
+  {
+    "id": 18,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "25.01.2026 21:23:17",
+    "action": "Müşteri Silindi",
+    "description": "Müşteri silindi: Taylor Green (taylor.green@example.com)"
+  },
+  {
+    "id": 17,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "25.01.2026 21:22:53",
+    "action": "Stok Güncellendi",
+    "description": "Mechanical Keyboard RGB: 32 → 33 (+1)"
+  },
+  {
+    "id": 16,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "25.01.2026 21:13:09",
+    "action": "Müşteri Silindi",
+    "description": "Müşteri silindi: Alex Smith (alex.smith@example.com)"
+  },
+  {
+    "id": 15,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "25.01.2026 21:05:25",
+    "action": "Müşteri Silindi",
+    "description": "Müşteri silindi: Morgan Anderson (morgan.anderson@example.com)"
+  },
+  {
+    "id": 14,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "25.01.2026 21:05:20",
+    "action": "Müşteri Silindi",
+    "description": "Müşteri silindi: Morgan Lopez (morgan.lopez@example.com)"
+  },
+  {
+    "id": 13,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "25.01.2026 21:04:18",
+    "action": "Müşteri Silindi",
+    "description": "Müşteri silindi: Jordan Brown (jordan.brown@example.com)"
+  },
+  {
+    "id": 12,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "25.01.2026 21:02:11",
+    "action": "Müşteri Silindi",
+    "description": "Müşteri silindi: Jordan Brown"
+  },
+  {
+    "id": 11,
+    "username": "Admin Kullanıcısı",
+    "timestamp": "25.01.2026 20:58:25",
+    "action": "Ürün Silindi",
+    "description": "Ürün silindi: USB-C Şarj Kablosu"
+  },
+  {
+    "id": 10,
+    "username": "Test Kullanıcısı",
+    "timestamp": "25.01.2026 20:57:23",
+    "action": "Stok Güncellendi",
+    "description": "USB-C Şarj Kablosu: 100 → 101 (+1)"
+  },
+  {
+    "id": 9,
+    "username": "Sistem Kullanıcısı",
+    "timestamp": "25.01.2026 20:52:21",
+    "action": "Stok Güncellendi",
+    "description": "Mechanical Keyboard RGB: 31 → 32 (+1)"
+  },
+  {
+    "id": 8,
+    "username": "Sistem Kullanıcısı",
+    "timestamp": "25.01.2026 20:52:20",
+    "action": "Stok Güncellendi",
+    "description": "Mechanical Keyboard RGB: 30 → 31 (+1)"
+  },
+  {
+    "id": 7,
+    "username": "Sistem Kullanıcısı",
+    "timestamp": "25.01.2026 20:52:20",
+    "action": "Stok Güncellendi",
+    "description": "Mechanical Keyboard RGB: 29 → 30 (+1)"
+  },
+  {
+    "id": 6,
+    "username": "Sistem Kullanıcısı",
+    "timestamp": "25.01.2026 20:52:20",
+    "action": "Stok Güncellendi",
+    "description": "Mechanical Keyboard RGB: 28 → 29 (+1)"
+  },
+  {
+    "id": 5,
+    "username": "Sistem Kullanıcısı",
+    "timestamp": "25.01.2026 20:52:20",
+    "action": "Stok Güncellendi",
+    "description": "Mechanical Keyboard RGB: 27 → 28 (+1)"
+  },
+  {
+    "id": 4,
+    "username": "Sistem Kullanıcısı",
+    "timestamp": "25.01.2026 20:52:20",
+    "action": "Stok Güncellendi",
+    "description": "Mechanical Keyboard RGB: 26 → 27 (+1)"
+  },
+  {
+    "id": 3,
+    "username": "Sistem Kullanıcısı",
+    "timestamp": "25.01.2026 20:52:19",
+    "action": "Stok Güncellendi",
+    "description": "Mechanical Keyboard RGB: 25 → 26 (+1)"
+  },
+  {
+    "id": 2,
+    "username": "Sistem Kullanıcısı",
+    "timestamp": "25.01.2026 20:50:50",
+    "action": "Ürün Silindi",
+    "description": "Ürün silindi: Wireless Mouse Logitech"
+  },
+  {
+    "id": 1,
+    "username": "Sistem Kullanıcısı",
+    "timestamp": "25.01.2026 20:47:09",
+    "action": "Stok Güncellendi",
+    "description": "Wireless Mouse Logitech: 5 → 6 (+1)"
+  }
+]

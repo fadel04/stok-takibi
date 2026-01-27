@@ -1,0 +1,52 @@
+[
+  {
+    "id": 4,
+    "name": "Mechanical Keyboard RGB",
+    "description": "Oyuncu için mekanik klavye",
+    "price": 129.99,
+    "stock": 60,
+    "category": "kış",
+    "size": "M",
+    "createdAt": "2024-01-18"
+  },
+  {
+    "id": 5,
+    "name": "4K Monitor LG",
+    "description": "27 inç 4K çözünürlüklü monitör",
+    "price": 699.99,
+    "stock": 8,
+    "category": "yaz",
+    "size": "S",
+    "createdAt": "2024-01-20"
+  },
+  {
+    "id": 6,
+    "name": "pantolon",
+    "description": "polar",
+    "price": 0,
+    "stock": 747,
+    "category": "yaz",
+    "size": "XL",
+    "createdAt": "2026-01-26"
+  },
+  {
+    "id": 7,
+    "name": "tshort",
+    "description": "kısa kol",
+    "price": 0,
+    "stock": 500,
+    "category": "kış",
+    "size": "45",
+    "createdAt": "2026-01-26"
+  },
+  {
+    "id": 8,
+    "name": "test",
+    "description": "testttt",
+    "price": 80,
+    "stock": 50,
+    "category": "yaz",
+    "size": "38",
+    "createdAt": "2026-01-27"
+  }
+]

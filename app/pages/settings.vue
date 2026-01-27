@@ -6,10 +6,10 @@ const links = [[{
   icon: 'i-lucide-user',
   to: '/settings',
   exact: true
-}, {
-  label: 'Güvenlik',
-  icon: 'i-lucide-shield',
-  to: '/settings/security'
+// }, {
+//   label: 'Güvenlik',
+//   icon: 'i-lucide-shield',
+//   to: '/settings/security'
 // }], [{
 //   label: 'Dokumantasyon',
 //   icon: 'i-lucide-book-open',

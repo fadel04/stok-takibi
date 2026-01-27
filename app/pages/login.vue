@@ -38,8 +38,13 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     })
 
     if (data.value?.success) {
-      const user = { ...data.value.user }
-      setUser(user)
+      const user = data.value.user
+      setUser({
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        avatar: user.avatar?.src ? { src: user.avatar.src, alt: user.avatar.alt || user.name } : undefined
+      })
 
       toast.add({
         title: 'Başarılı',
@@ -122,7 +127,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           </div>
 
           <!-- Demo Bilgileri -->
-          <UCard variant="soft" color="blue">
+          <!-- <UCard variant="soft" color="blue">
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-info" class="size-5" />
@@ -141,7 +146,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
                 <span class="font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">user123</span>
               </div>
             </div>
-          </UCard>
+          </UCard> -->
 
           <!-- Login Button -->
           <UButton

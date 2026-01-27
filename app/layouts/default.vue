@@ -46,13 +46,13 @@ const links = [[{
     onSelect: () => {
       open.value = false
     }
-  }, {
+    // }, {
 
-    label: 'Güvenlik',
-    to: '/settings/security',
-    onSelect: () => {
-      open.value = false
-    }
+  //   label: 'Güvenlik',
+  //   to: '/settings/security',
+  //   onSelect: () => {
+  //     open.value = false
+  //   }
   }]
 }]
 // [

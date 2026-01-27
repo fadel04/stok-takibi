@@ -10,7 +10,7 @@ const table = useTemplateRef('table')
 
 const schema = z.object({
   name: z.string().min(2, 'En az 2 karakter'),
-  description: z.string().min(5, 'En az 5 karakter'),
+  description: z.string().optional(),
   price: z.number().min(0, 'Fiyat 0 den küçük olamaz'),
   stock: z.number().min(0, 'Stok 0 den küçük olamaz'),
   category: z.enum(['kış', 'yaz'], { message: 'Kategori seçiniz' }),
@@ -431,26 +431,26 @@ function resetForm() {
 
       <UDashboardToolbar>
         <template #left>
-          <div class="flex items-center gap-3">
-            <UInput
-              v-model="searchQuery"
-              icon="i-lucide-search"
-              placeholder="Ürün ara..."
-              class="w-full max-w-xs"
+          <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+            <UButton
+              v-for="tab in seasonTabs"
+              :key="tab.value"
+              :label="tab.label"
+              :color="selectedSeason === tab.value ? 'primary' : 'neutral'"
+              :variant="selectedSeason === tab.value ? 'solid' : 'ghost'"
+              size="sm"
+              @click="selectedSeason = tab.value as any"
             />
-
-            <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
-              <UButton
-                v-for="tab in seasonTabs"
-                :key="tab.value"
-                :label="tab.label"
-                :color="selectedSeason === tab.value ? 'primary' : 'neutral'"
-                :variant="selectedSeason === tab.value ? 'solid' : 'ghost'"
-                size="sm"
-                @click="selectedSeason = tab.value as any"
-              />
-            </div>
           </div>
+        </template>
+
+        <template #right>
+          <UInput
+            v-model="searchQuery"
+            icon="i-lucide-search"
+            placeholder="Ürün ara..."
+            class="w-64"
+          />
         </template>
       </UDashboardToolbar>
     </template>
@@ -505,17 +505,15 @@ function resetForm() {
               class="space-y-4"
               @submit="onSubmitAdd"
             >
-              <UFormField label="Ürün Adı" name="name">
-                <UInput v-model="state.name" placeholder="Ürün adını girin" />
-              </UFormField>
+              <div class="grid grid-cols-2 gap-4">
+                <UFormField label="Ürün Adı" name="name">
+                  <UInput v-model="state.name" placeholder="Ürün adını girin" />
+                </UFormField>
 
-              <UFormField label="Açıklama" name="description">
-                <UTextarea v-model="state.description" placeholder="Ürün açıklamasını girin" :rows="3" />
-              </UFormField>
-
-              <UFormField label="Beden Ölçü" name="size">
-                <UInput v-model="state.size" placeholder="Örn: S, M, L, XL veya 38, 40, 42" />
-              </UFormField>
+                <UFormField label="Beden Ölçü" name="size">
+                  <UInput v-model="state.size" placeholder="Örn: S, M, L, XL" />
+                </UFormField>
+              </div>
 
               <UFormField label="Kategori" name="category">
                 <div class="flex gap-2">
@@ -549,6 +547,10 @@ function resetForm() {
                     placeholder="0"
                     min="0"
                   />
+                </UFormField>
+
+                <UFormField label="Açıklama" name="description">
+                  <UTextarea v-model="state.description" placeholder="Ürün açıklamasını girin" :rows="3" />
                 </UFormField>
               </div>
 
@@ -677,16 +679,18 @@ function resetForm() {
               class="space-y-4"
               @submit="onSubmitEdit"
             >
-              <UFormField label="Ürün Adı" name="name">
-                <UInput v-model="state.name" placeholder="Ürün adını girin" />
-              </UFormField>
+              <div class="grid grid-cols-2 gap-4">
+                <UFormField label="Ürün Adı" name="name">
+                  <UInput v-model="state.name" placeholder="Ürün adını girin" />
+                </UFormField>
+
+                <UFormField label="Beden Ölçü" name="size">
+                  <UInput v-model="state.size" placeholder="Örn: S, M, L, XL" />
+                </UFormField>
+              </div>
 
               <UFormField label="Açıklama" name="description">
                 <UTextarea v-model="state.description" placeholder="Ürün açıklamasını girin" :rows="3" />
-              </UFormField>
-
-              <UFormField label="Beden Ölçü" name="size">
-                <UInput v-model="state.size" placeholder="Örn: S, M, L, XL veya 38, 40, 42" />
               </UFormField>
 
               <UFormField label="Kategori" name="category">

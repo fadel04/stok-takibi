@@ -46,7 +46,6 @@ const filteredTransactions = computed(() => {
 
   let filtered = transactions.value
 
-  // Filter by tab
   if (activeTab.value === 'inputs') {
     filtered = filtered.filter(t =>
       t.action === 'Ürün Eklendi'
@@ -59,14 +58,12 @@ const filteredTransactions = computed(() => {
     )
   }
 
-  // Filter by search
   return filtered.filter((transaction) => {
     const matchesSearch
       = transaction.username?.toLowerCase().includes(searchQuery.value.toLowerCase())
         || transaction.action?.toLowerCase().includes(searchQuery.value.toLowerCase())
         || transaction.description?.toLowerCase().includes(searchQuery.value.toLowerCase())
 
-    // Filter by category
     const matchesCategory = selectedCategory.value === 'all'
       || extractProductCategory(transaction.description) === selectedCategory.value
 
@@ -77,7 +74,13 @@ const filteredTransactions = computed(() => {
 const extractProductName = (description: string): string => {
   if (!description) return '-'
 
-  // Extract product name before ":" or "→"
+  if (description.includes('eklendi:')) {
+    const parts = description.split('eklendi:')
+    if (parts[1]) {
+      return parts[1].trim()
+    }
+  }
+
   const match = description.match(/^([^:→]+)/)
   if (match && match[1]) {
     return match[1].trim()
@@ -89,16 +92,13 @@ const extractProductName = (description: string): string => {
 const extractProductSize = (description: string): string => {
   if (!description || !products.value) return '-'
 
-  // استخراج اسم المنتج من الوصف
   const productName = extractProductName(description)
   if (productName === '-') return '-'
 
-  // البحث عن المنتج في قائمة المنتجات
   const product = products.value.find(p =>
-    p.name.toLowerCase() === productName.toLowerCase()
+    p.name.trim().toLowerCase() === productName.trim().toLowerCase()
   )
 
-  // إرجاع المقاس من بيانات المنتج
   if (product && product.size) {
     return product.size
   }
@@ -109,11 +109,9 @@ const extractProductSize = (description: string): string => {
 const extractProductCategory = (description: string): string => {
   if (!description || !products.value) return ''
 
-  // استخراج اسم المنتج من الوصف
   const productName = extractProductName(description)
   if (productName === '-') return ''
 
-  // البحث عن المنتج في قائمة المنتجات
   const product = products.value.find(p =>
     p.name.toLowerCase() === productName.toLowerCase()
   )
@@ -122,7 +120,6 @@ const extractProductCategory = (description: string): string => {
     return product.category.toLowerCase()
   }
 
-  // في حالة عدم وجود المنتج، حاول الاستخراج من الوصف
   if (/kış/i.test(description)) {
     return 'kış'
   }
@@ -324,14 +321,7 @@ definePageMeta({
 
       <UDashboardToolbar>
         <template #left>
-          <div class="flex items-center gap-3 w-full">
-            <UInput
-              v-model="searchQuery"
-              icon="i-lucide-search"
-              placeholder="Ara..."
-              class="flex-1 max-w-md"
-            />
-
+          <div class="flex items-center gap-3">
             <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
               <UButton
                 v-for="tab in tabs"
@@ -345,6 +335,8 @@ definePageMeta({
               />
             </div>
 
+            <div class="h-8 w-px bg-gray-300 dark:bg-gray-700"></div>
+
             <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
               <UButton
                 v-for="category in categoryTabs"
@@ -357,6 +349,15 @@ definePageMeta({
               />
             </div>
           </div>
+        </template>
+
+        <template #right>
+          <UInput
+            v-model="searchQuery"
+            icon="i-lucide-search"
+            placeholder="Ara..."
+            class="w-64"
+          />
         </template>
       </UDashboardToolbar>
     </template>

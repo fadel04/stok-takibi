@@ -24,7 +24,7 @@ interface Product {
   createdAt: string
 }
 
-const { data: products } = await useFetch<Product[]>('/api/products')
+const { data: products, status } = await useFetch<Product[]>('/api/products')
 
 const { data: stats } = await useAsyncData<Stat[]>('stats', async () => {
   const productsList = products.value || []
@@ -69,7 +69,10 @@ const { data: stats } = await useAsyncData<Stat[]>('stats', async () => {
 </script>
 
 <template>
-  <UPageGrid class="lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-px">
+  <div v-if="status === 'pending'" class="flex items-center justify-center py-12">
+    <UIcon name="i-lucide-loader-2" class="size-8 animate-spin text-gray-400 dark:text-gray-500" />
+  </div>
+  <UPageGrid v-else class="lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-px">
     <UPageCard
       v-for="(stat, index) in stats"
       :key="index"

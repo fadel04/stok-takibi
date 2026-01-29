@@ -22,6 +22,7 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'netlify',
     compressPublicAssets: true,
+    serveStatic: true,
     routeRules: {
       '/api/**': {
         cors: true,

@@ -1,12 +1,12 @@
 [build]
   command = "pnpm run build"
-  publish = ".output/public"
+  publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20"
 
 [functions]
-  directory = ".output/server"
+  directory = ".netlify/functions-internal"
   node_bundler = "esbuild"
 
 [[redirects]]

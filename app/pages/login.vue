@@ -74,7 +74,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       <!-- الشعار والعنوان -->
       <div class="text-center mb-8">
         <div class="flex justify-center items-center gap-4 mb-4">
-          <img src="/logo.png" alt="إدارة المخزون" class="h-20 w-20 object-contain">
+          <!-- <img src="/logo.png" alt="إدارة المخزون" class="h-20 w-20 object-contain"> -->
           <div class="p-3 rounded-full bg-primary/10 dark:bg-primary/20">
             <UIcon name="i-lucide-package" class="size-8 text-primary" />
           </div>

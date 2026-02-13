@@ -23,9 +23,9 @@ const user = computed(() => {
   }
   return {
     id: 0,
-    name: 'Kullanıcı',
+    name: 'المستخدم',
     email: 'user@example.com',
-    label: 'Kullanıcı'
+    label: 'المستخدم'
   }
 })
 
@@ -36,8 +36,8 @@ onMounted(() => {
 function handleLogout() {
   logoutUser()
   toast.add({
-    title: 'Çıkış Yapıldı',
-    description: 'Güle güle!',
+    title: 'تم تسجيل الخروج',
+    description: 'إلى اللقاء!',
     icon: 'i-lucide-check',
     color: 'success'
   })
@@ -48,14 +48,14 @@ const items = computed<DropdownMenuItem[][]>(() => ([[{
   type: 'label',
   label: user.value.name
 }], [{
-  label: 'Ayarlar',
+  label: 'الإعدادات',
   icon: 'i-lucide-settings',
   to: '/settings'
 }], [{
-  label: 'Tema',
+  label: 'السمة',
   icon: 'i-lucide-palette',
   children: [{
-    label: 'Birincil',
+    label: 'أساسي',
     slot: 'chip',
     chip: appConfig.ui.colors.primary,
     content: {
@@ -94,10 +94,10 @@ const items = computed<DropdownMenuItem[][]>(() => ([[{
     }))
   }]
 }, {
-  label: 'Görünüm',
+  label: 'المظهر',
   icon: 'i-lucide-sun-moon',
   children: [{
-    label: 'Açık',
+    label: 'فاتح',
     icon: 'i-lucide-sun',
     type: 'checkbox',
     checked: colorMode.value === 'light',
@@ -106,7 +106,7 @@ const items = computed<DropdownMenuItem[][]>(() => ([[{
       colorMode.preference = 'light'
     }
   }, {
-    label: 'Koyu',
+    label: 'داكن',
     icon: 'i-lucide-moon',
     type: 'checkbox',
     checked: colorMode.value === 'dark',
@@ -120,7 +120,7 @@ const items = computed<DropdownMenuItem[][]>(() => ([[{
     }
   }]
 }], [{
-  label: 'Çıkış Yap',
+  label: 'تسجيل الخروج',
   icon: 'i-lucide-log-out',
   onSelect: handleLogout
 }]]))

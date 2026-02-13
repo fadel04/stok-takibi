@@ -13,12 +13,12 @@ useHead({
     { rel: 'icon', href: '/favicon.ico' }
   ],
   htmlAttrs: {
-    lang: 'tr'
+    lang: 'ar'
   }
 })
 
-const title = 'Nuxt Kontrol Paneli Şablonu'
-const description = 'Nuxt UI ile oluşturulmuş profesyonel bir kontrol paneli şablonu, birden fazla sayfa, veri görselleştirme ve güçlü yönetim arayüzleri oluşturmak için kapsamlı yönetim yetenekleri içerir.'
+const title = 'قالب لوحة تحكم Nuxt'
+const description = 'قالب لوحة تحكم احترافي مبني باستخدام Nuxt UI، يتضمن صفحات متعددة وتصورًا للبيانات وواجهات إدارة قوية.'
 
 useSeoMeta({
   title,

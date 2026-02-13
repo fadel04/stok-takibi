@@ -6,41 +6,41 @@ const toast = useToast()
 const open = ref(false)
 
 const links = [[{
-  label: 'Kontrol Paneli',
+  label: 'لوحة التحكم',
   icon: 'i-lucide-house',
   to: '/dashboard',
   onSelect: () => {
     open.value = false
   }
 }, {
-  label: 'Ürünler',
+  label: 'المنتجات',
   icon: 'i-lucide-package',
   to: '/products',
   onSelect: () => {
     open.value = false
   }
 // }, {
-//   label: 'Faturalar',
+//   label: 'الفواتير',
 //   icon: 'i-lucide-file-text',
 //   to: '/invoices',
 //   onSelect: () => {
 //     open.value = false
 //   }
 }, {
-  label: 'Geçmiş',
+  label: 'السجل',
   icon: 'i-lucide-history',
   to: '/gecmis',
   onSelect: () => {
     open.value = false
   }
 }, {
-  label: 'Ayarlar',
+  label: 'الإعدادات',
   to: '/settings',
   icon: 'i-lucide-settings',
   defaultOpen: true,
   type: 'trigger',
   children: [{
-    label: 'Genel',
+    label: 'عام',
     to: '/settings',
     exact: true,
     onSelect: () => {
@@ -48,7 +48,7 @@ const links = [[{
     }
     // }, {
 
-  //   label: 'Güvenlik',
+  //   label: 'الأمان',
   //   to: '/settings/security',
   //   onSelect: () => {
   //     open.value = false
@@ -62,7 +62,7 @@ const links = [[{
 //   to: 'https://github.com/nuxt-ui-templates/dashboard',
 //   target: '_blank'
 //   }, {
-//   label: 'Yardım ve Destek',
+//   label: 'المساعدة والدعم',
 //   icon: 'i-lucide-info',
 //   to: 'https://github.com/nuxt-ui-templates/dashboard',
 //   target: '_blank'
@@ -72,7 +72,7 @@ const links = [[{
 
 const groups = computed(() => [{
   id: 'links',
-  label: 'Sayfalar',
+  label: 'الصفحات',
   items: links.flat()
 }])
 
@@ -83,18 +83,18 @@ onMounted(async () => {
   }
 
   toast.add({
-    title: 'Web sitemizde deneyiminizi geliştirmek için birinci taraf çerezleri kullanıyoruz.',
+    title: 'نستخدم ملفات تعريف الارتباط الأساسية لتحسين تجربتك على موقعنا.',
     duration: 0,
     close: false,
     actions: [{
-      label: 'Kabul Et',
+      label: 'قبول',
       color: 'neutral',
       variant: 'outline',
       onClick: () => {
         cookie.value = 'accepted'
       }
     }, {
-      label: 'Reddet',
+      label: 'رفض',
       color: 'neutral',
       variant: 'ghost'
     }]

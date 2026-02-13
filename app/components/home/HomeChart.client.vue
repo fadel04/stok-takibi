@@ -30,7 +30,7 @@ const { width } = useElementSize(cardRef)
 const data = ref<DataRecord[]>([])
 const { data: products } = await useFetch<Product[]>('/api/products')
 
-// Mevcut toplam stoğu hesaplama
+// حساب إجمالي المخزون الحالي
 const currentTotalStock = computed(() => {
   return (products.value || []).reduce((sum, p) => sum + (p.stock || 0), 0)
 })
@@ -42,12 +42,12 @@ watch([() => props.period, () => props.range], () => {
     monthly: eachMonthOfInterval
   } as Record<Period, typeof eachDayOfInterval>)[props.period](props.range)
 
-  // Zaman içinde stok değişimlerini simüle etme
+  // محاكاة تغيّر المخزون بمرور الوقت
   const baseStock = currentTotalStock.value || 2000
-  const variation = baseStock * 0.15 // %15 değişim
+  const variation = baseStock * 0.15 // %15 تغيّر
 
   data.value = dates.map((date, index) => {
-    // Stok için kademeli eğri oluşturma
+    // إنشاء منحنى تدريجي للمخزون
     const trend = Math.sin(index / dates.length * Math.PI * 2) * variation
     const randomVariation = (Math.random() - 0.5) * (variation * 0.3)
     const stockLevel = Math.round(baseStock + trend + randomVariation)
@@ -80,7 +80,7 @@ const xTicks = (i: number) => {
   return formatDate(data.value[i].date)
 }
 
-const template = (d: DataRecord) => `${formatDate(d.date)}: ${d.stockLevel.toLocaleString('tr-TR')} adet`
+const template = (d: DataRecord) => `${formatDate(d.date)}: ${d.stockLevel.toLocaleString('ar')} قطعة`
 </script>
 
 <template>
@@ -88,10 +88,10 @@ const template = (d: DataRecord) => `${formatDate(d.date)}: ${d.stockLevel.toLoc
     <template #header>
       <div>
         <p class="text-xs text-muted uppercase mb-1.5">
-          Ortalama Stok Seviyesi
+          متوسط مستوى المخزون
         </p>
         <p class="text-3xl text-highlighted font-semibold">
-          {{ average.toLocaleString('tr-TR') }} <span class="text-base text-muted">adet</span>
+          {{ average.toLocaleString('ar') }} <span class="text-base text-muted">قطعة</span>
         </p>
       </div>
     </template>

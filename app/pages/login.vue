@@ -13,8 +13,8 @@ const colorMode = useColorMode()
 const { setUser } = useCurrentUser()
 
 const schema = z.object({
-  email: z.string().email('Geçerli bir e-posta girin'),
-  password: z.string().min(6, 'En az 6 karakter olmalıdır')
+  email: z.string().email('أدخل بريدًا إلكترونيًا صالحًا'),
+  password: z.string().min(6, 'يجب ألا تقل عن 6 أحرف')
 })
 
 type Schema = z.output<typeof schema>
@@ -47,8 +47,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       })
 
       toast.add({
-        title: 'Başarılı',
-        description: `Hoş geldiniz, ${user.name}!`,
+        title: 'نجاح',
+        description: `مرحبًا، ${user.name}!`,
         icon: 'i-lucide-check',
         color: 'success'
       })
@@ -57,8 +57,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     }
   } catch (error: unknown) {
     toast.add({
-      title: 'Hata',
-      description: error instanceof Error ? error.message : 'E-posta veya şifre yanlış',
+      title: 'خطأ',
+      description: error instanceof Error ? error.message : 'البريد الإلكتروني أو كلمة المرور غير صحيحة',
       icon: 'i-lucide-x',
       color: 'error'
     })
@@ -71,23 +71,23 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 <template>
   <div class="min-h-screen flex items-center justify-center bg-linear-to-br from-primary/10 to-primary/5 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
     <div class="w-full max-w-md">
-      <!-- Logo ve Başlık -->
+      <!-- الشعار والعنوان -->
       <div class="text-center mb-8">
         <div class="flex justify-center items-center gap-4 mb-4">
-          <img src="/logo.png" alt="Stok Takibi" class="h-20 w-20 object-contain">
+          <img src="/logo.png" alt="إدارة المخزون" class="h-20 w-20 object-contain">
           <div class="p-3 rounded-full bg-primary/10 dark:bg-primary/20">
             <UIcon name="i-lucide-package" class="size-8 text-primary" />
           </div>
         </div>
         <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-          Stok Takibi
+          إدارة المخزون
         </h1>
         <p class="text-gray-600 dark:text-gray-400 text-lg">
-          Hesabınıza giriş yapın
+          سجّل الدخول إلى حسابك
         </p>
       </div>
 
-      <!-- Login Kartı -->
+      <!-- بطاقة تسجيل الدخول -->
       <UCard class="shadow-lg border-0 dark:bg-gray-800/50">
         <UForm
           :schema="schema"
@@ -97,7 +97,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         >
           <!-- Email Field -->
           <div>
-            <UFormField label="E-posta Adresi" name="email">
+            <UFormField label="البريد الإلكتروني" name="email">
               <UInput
                 v-model="state.email"
                 type="email"
@@ -113,7 +113,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
           <!-- Password Field -->
           <div>
-            <UFormField label="Şifre" name="password">
+            <UFormField label="كلمة المرور" name="password">
               <UInput
                 v-model="state.password"
                 type="password"
@@ -131,7 +131,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-info" class="size-5" />
-                <span class="font-semibold">Demo Hesapları</span>
+                <span class="font-semibold">حسابات تجريبية</span>
               </div>
             </template>
             <div class="space-y-2 text-sm">
@@ -150,7 +150,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
           <!-- Login Button -->
           <UButton
-            label="Giriş Yap"
+            label="تسجيل الدخول"
             type="submit"
             block
             size="lg"
@@ -162,7 +162,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
       <!-- Footer -->
       <div class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-        <p>Stok Takibi Sistemi © 2026</p>
+        <p>نظام إدارة المخزون © 2026</p>
       </div>
 
       <!-- Theme Toggle -->

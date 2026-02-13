@@ -60,7 +60,7 @@ export default defineEventHandler(async (event) => {
     if (!existing) {
       throw createError({
         statusCode: 404,
-        statusMessage: 'Fatura bulunamadı'
+        statusMessage: 'الفاتورة غير موجودة'
       })
     }
 
@@ -84,12 +84,12 @@ export default defineEventHandler(async (event) => {
     if (!existing) {
       throw createError({
         statusCode: 404,
-        statusMessage: 'Fatura bulunamadı'
+        statusMessage: 'الفاتورة غير موجودة'
       })
     }
 
     await db.delete(invoices).where(eq(invoices.id, parseInt(id)))
-    return { success: true, message: 'Fatura silindi' }
+    return { success: true, message: 'تم حذف الفاتورة' }
   }
 
   throw createError({

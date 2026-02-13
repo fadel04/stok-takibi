@@ -14,8 +14,8 @@ onMounted(() => {
 })
 
 const passwordSchema = z.object({
-  current: z.string().min(8, 'En az 8 karakter olmalıdır'),
-  new: z.string().min(8, 'En az 8 karakter olmalıdır')
+  current: z.string().min(8, 'يجب ألا تقل عن 8 أحرف'),
+  new: z.string().min(8, 'يجب ألا تقل عن 8 أحرف')
 })
 
 type PasswordSchema = z.output<typeof passwordSchema>
@@ -28,7 +28,7 @@ const password = reactive<Partial<PasswordSchema>>({
 const validate = (state: Partial<PasswordSchema>): FormError[] => {
   const errors: FormError[] = []
   if (state.current && state.new && state.current === state.new) {
-    errors.push({ name: 'new', message: 'Şifreler farklı olmalıdır' })
+    errors.push({ name: 'new', message: 'يجب أن تكون كلمة المرور الجديدة مختلفة' })
   }
   return errors
 }
@@ -52,8 +52,8 @@ async function onPasswordSubmit(event: FormSubmitEvent<PasswordSchema>) {
     setUser(updatedUser)
 
     toast.add({
-      title: 'Başarılı',
-      description: 'Şifreniz güncellendi',
+      title: 'نجاح',
+      description: 'تم تحديث كلمة المرور',
       icon: 'i-lucide-check',
       color: 'success'
     })
@@ -62,8 +62,8 @@ async function onPasswordSubmit(event: FormSubmitEvent<PasswordSchema>) {
     password.new = undefined
   } catch (error) {
     toast.add({
-      title: 'Hata',
-      description: error instanceof Error ? error.message : 'Şifre güncellenemedi',
+      title: 'خطأ',
+      description: error instanceof Error ? error.message : 'تعذر تحديث كلمة المرور',
       icon: 'i-lucide-x',
       color: 'error'
     })
@@ -73,8 +73,8 @@ async function onPasswordSubmit(event: FormSubmitEvent<PasswordSchema>) {
 
 <template>
   <UPageCard
-    title="Şifre"
-    description="Yeni bir şifre belirlemeden önce mevcut şifrenizi onaylayın."
+    title="كلمة المرور"
+    description="أكد كلمة المرور الحالية قبل تعيين كلمة مرور جديدة."
     variant="subtle"
   >
     <UForm
@@ -88,7 +88,7 @@ async function onPasswordSubmit(event: FormSubmitEvent<PasswordSchema>) {
         <UInput
           v-model="password.current"
           type="password"
-          placeholder="Mevcut şifre"
+          placeholder="كلمة المرور الحالية"
           class="w-full"
         />
       </UFormField>
@@ -97,22 +97,22 @@ async function onPasswordSubmit(event: FormSubmitEvent<PasswordSchema>) {
         <UInput
           v-model="password.new"
           type="password"
-          placeholder="Yeni şifre"
+          placeholder="كلمة المرور الجديدة"
           class="w-full"
         />
       </UFormField>
 
-      <UButton label="Güncelle" class="w-fit" type="submit" />
+      <UButton label="تحديث" class="w-fit" type="submit" />
     </UForm>
   </UPageCard>
 
   <UPageCard
-    title="Hesap"
-    description="Artık hizmetimizi kullanmak istemiyor musunuz? Hesabınızı buradan silebilirsiniz. Bu işlem geri alınamaz. Bu hesapla ilgili tüm bilgiler kalıcı olarak silinecektir."
+    title="الحساب"
+    description="هل لم تعد ترغب في استخدام الخدمة؟ يمكنك حذف حسابك من هنا. لا يمكن التراجع عن هذا الإجراء. سيتم حذف جميع بيانات هذا الحساب نهائيًا."
     class="bg-gradient-to-tl from-error/10 from-5% to-default"
   >
     <template #footer>
-      <UButton label="Hesabı sil" color="error" />
+      <UButton label="حذف الحساب" color="error" />
     </template>
   </UPageCard>
 </template>

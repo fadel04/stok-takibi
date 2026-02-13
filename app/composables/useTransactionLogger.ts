@@ -8,7 +8,7 @@ export const useTransactionLogger = () => {
         body: {
           action,
           description,
-          username: username || currentUser.value?.name || 'Sistem Kullanıcısı'
+          username: username || currentUser.value?.name || 'مستخدم النظام'
         }
       })
     } catch (error) {

@@ -9,9 +9,9 @@ const { logTransaction } = useTransactionLogger()
 const table = useTemplateRef('table')
 
 const schema = z.object({
-  id: z.string().min(2, 'En az 2 karakter'),
+  id: z.string().min(2, 'حرفان على الأقل'),
   customerName: z.number(),
-  amount: z.number().min(0, 'Tutar 0 dan küçük olamaz'),
+  amount: z.number().min(0, 'لا يمكن أن يكون المبلغ أقل من 0'),
   issueDate: z.string(),
   dueDate: z.string(),
   status: z.enum(['paid', 'pending', 'overdue']),
@@ -95,11 +95,11 @@ const getStatusColor = (status: string): 'success' | 'warning' | 'error' | 'neut
 const getStatusLabel = (status: string) => {
   switch (status) {
     case 'paid':
-      return 'Ödendi'
+      return 'مدفوعة'
     case 'pending':
-      return 'Beklemede'
+      return 'قيد الانتظار'
     case 'overdue':
-      return 'Vadesini Geçmiş'
+      return 'متأخرة'
     default:
       return status
   }
@@ -108,32 +108,32 @@ const getStatusLabel = (status: string) => {
 const columns: TableColumn<Invoice>[] = [
   {
     accessorKey: 'id',
-    header: 'Fatura No',
+    header: 'رقم الفاتورة',
     cell: ({ row }) => row.original.id
   },
   {
     accessorKey: 'customerName',
-    header: 'Müşteri',
+    header: 'العميل',
     cell: ({ row }) => row.original.customerName
   },
   {
     accessorKey: 'amount',
-    header: 'Tutar',
+    header: 'المبلغ',
     cell: ({ row }) => `₺${row.original.amount.toFixed(2)}`
   },
   {
     accessorKey: 'issueDate',
-    header: 'Düzenlenme',
-    cell: ({ row }) => new Date(row.original.issueDate).toLocaleDateString('tr-TR')
+    header: 'الإصدار',
+    cell: ({ row }) => new Date(row.original.issueDate).toLocaleDateString('ar')
   },
   {
     accessorKey: 'dueDate',
-    header: 'Vade',
-    cell: ({ row }) => new Date(row.original.dueDate).toLocaleDateString('tr-TR')
+    header: 'الاستحقاق',
+    cell: ({ row }) => new Date(row.original.dueDate).toLocaleDateString('ar')
   },
   {
     accessorKey: 'status',
-    header: 'Durum',
+    header: 'الحالة',
     cell: ({ row }) => {
       const UBadge = resolveComponent('UBadge')
       return h(UBadge, {
@@ -144,7 +144,7 @@ const columns: TableColumn<Invoice>[] = [
   },
   {
     id: 'actions',
-    header: 'İşlemler',
+    header: 'الإجراءات',
     cell: ({ row }) => {
       const UButton = resolveComponent('UButton')
       return h('div', { class: 'flex gap-2' }, [
@@ -202,8 +202,8 @@ async function onSubmitAdd(event: FormSubmitEvent<Schema>) {
   isLoading.value = true
   try {
     await logTransaction(
-      'Fatura Eklendi',
-      `Yeni fatura eklendi: ${event.data.id} - Müşteri: ${event.data.customerName}`
+      'تمت إضافة فاتورة',
+      `تمت إضافة فاتورة جديدة: ${event.data.id} - العميل: ${event.data.customerName}`
     )
 
     await $fetch('/api/invoices', {
@@ -217,8 +217,8 @@ async function onSubmitAdd(event: FormSubmitEvent<Schema>) {
     })
 
     toast.add({
-      title: 'Başarılı',
-      description: 'Fatura eklendi',
+      title: 'نجاح',
+      description: 'تمت إضافة الفاتورة',
       icon: 'i-lucide-check',
       color: 'success'
     })
@@ -229,8 +229,8 @@ async function onSubmitAdd(event: FormSubmitEvent<Schema>) {
   }
   catch (error: unknown) {
     toast.add({
-      title: 'Hata',
-      description: error instanceof Error ? error.message : 'Fatura eklenemedi',
+      title: 'خطأ',
+      description: error instanceof Error ? error.message : 'تعذر إضافة الفاتورة',
       icon: 'i-lucide-x',
       color: 'error'
     })
@@ -255,13 +255,13 @@ async function onSubmitEdit(event: FormSubmitEvent<Schema>) {
     })
 
     await logTransaction(
-      'Fatura Güncellendi',
-      `Fatura güncellendi: ${event.data.id} - Müşteri: ${event.data.customerName}`
+      'تم تحديث الفاتورة',
+      `تم تحديث الفاتورة: ${event.data.id} - العميل: ${event.data.customerName}`
     )
 
     toast.add({
-      title: 'Başarılı',
-      description: 'Fatura güncellendi',
+      title: 'نجاح',
+      description: 'تم تحديث الفاتورة',
       icon: 'i-lucide-check',
       color: 'success'
     })
@@ -272,8 +272,8 @@ async function onSubmitEdit(event: FormSubmitEvent<Schema>) {
   }
   catch (error: unknown) {
     toast.add({
-      title: 'Hata',
-      description: error instanceof Error ? error.message : 'Fatura güncellenemedi',
+      title: 'خطأ',
+      description: error instanceof Error ? error.message : 'تعذر تحديث الفاتورة',
       icon: 'i-lucide-x',
       color: 'error'
     })
@@ -291,13 +291,13 @@ async function downloadInvoice(invoice: Invoice) {
   element.click()
 
   await logTransaction(
-    'Fatura İndirildi',
-    `Fatura indirildi: ${invoice.id} - Müşteri: ${invoice.customerName}`
+    'تم تنزيل الفاتورة',
+    `تم تنزيل الفاتورة: ${invoice.id} - العميل: ${invoice.customerName}`
   )
 
   toast.add({
-    title: 'Başarılı',
-    description: 'Fatura indirildi',
+    title: 'نجاح',
+    description: 'تم تنزيل الفاتورة',
     icon: 'i-lucide-check',
     color: 'success'
   })
@@ -307,30 +307,30 @@ function generateInvoicePDF(invoice: Invoice) {
   let content = `
 ================ F A T U R A ================
 
-Fatura No: ${invoice.id}
-Tarih: ${new Date(invoice.issueDate).toLocaleDateString('tr-TR')}
-Vade: ${new Date(invoice.dueDate).toLocaleDateString('tr-TR')}
+رقم الفاتورة: ${invoice.id}
+التاريخ: ${new Date(invoice.issueDate).toLocaleDateString('ar')}
+الاستحقاق: ${new Date(invoice.dueDate).toLocaleDateString('ar')}
 
 --------------------------------------------
-Müşteri Bilgileri
+بيانات العميل
 --------------------------------------------
 ${invoice.customerName}
 
 --------------------------------------------
-Fatura Kalemleri
+بنود الفاتورة
 --------------------------------------------
 `
 
   invoice.items?.forEach(item => {
     content += `\n${item.description}
-  Miktar: ${item.quantity} x ₺${item.unitPrice.toFixed(2)} = ₺${item.total.toFixed(2)}\n`
+  الكمية: ${item.quantity} x ₺${item.unitPrice.toFixed(2)} = ₺${item.total.toFixed(2)}\n`
   })
 
   content += `
 --------------------------------------------
-Toplam Tutar: ₺${invoice.amount.toFixed(2)}
-Durum: ${getStatusLabel(invoice.status)}
-Notlar: ${invoice.notes || '-'}
+إجمالي المبلغ: ₺${invoice.amount.toFixed(2)}
+الحالة: ${getStatusLabel(invoice.status)}
+الملاحظات: ${invoice.notes || '-'}
 --------------------------------------------
 `
 
@@ -340,16 +340,16 @@ Notlar: ${invoice.notes || '-'}
 async function deleteInvoice(id: string) {
   const confirmed = await new Promise<boolean>(resolve => {
     toast.add({
-      title: 'Silmek istediğinizden emin misiniz?',
-      description: 'Bu işlem geri alınamaz',
+      title: 'هل أنت متأكد من الحذف؟',
+      description: 'لا يمكن التراجع عن هذا الإجراء',
       actions: [
         {
-          label: 'Evet, Sil',
+          label: 'نعم، احذف',
           color: 'error',
           onClick: () => resolve(true)
         },
         {
-          label: 'İptal',
+          label: 'إلغاء',
           color: 'neutral',
           onClick: () => resolve(false)
         }
@@ -368,14 +368,14 @@ async function deleteInvoice(id: string) {
 
     if (invoice) {
       await logTransaction(
-        'Fatura Silindi',
-        `Fatura silindi: ${invoice.id} - Müşteri: ${invoice.customerName} - Tutar: ₺${invoice.amount.toFixed(2)}`
+        'تم حذف الفاتورة',
+        `تم حذف الفاتورة: ${invoice.id} - العميل: ${invoice.customerName} - المبلغ: ₺${invoice.amount.toFixed(2)}`
       )
     }
 
     toast.add({
-      title: 'Başarılı',
-      description: 'Fatura silindi',
+      title: 'نجاح',
+      description: 'تم حذف الفاتورة',
       icon: 'i-lucide-check',
       color: 'success'
     })
@@ -383,8 +383,8 @@ async function deleteInvoice(id: string) {
     await refresh()
   } catch (error: any) {
     toast.add({
-      title: 'Hata',
-      description: error.message || 'Fatura silinemedi',
+      title: 'خطأ',
+      description: error.message || 'تعذر حذف الفاتورة',
       icon: 'i-lucide-x',
       color: 'error'
     })
@@ -407,14 +407,14 @@ function resetForm() {
 <template>
   <UDashboardPanel id="invoices">
     <template #header>
-      <UDashboardNavbar title="Faturalar">
+      <UDashboardNavbar title="الفواتير">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
 
         <template #right>
           <UButton
-            label="Fatura Ekle"
+            label="إضافة فاتورة"
             icon="i-lucide-plus"
             @click="isAddModalOpen = true"
           />
@@ -426,16 +426,16 @@ function resetForm() {
           <UInput
             v-model="searchQuery"
             icon="i-lucide-search"
-            placeholder="Fatura ara..."
+            placeholder="ابحث عن فاتورة..."
             class="w-full max-w-xs"
           />
           <USelect
             v-model="selectedStatus"
             :items="[
-              { label: 'Tüm Durumlar', value: 'all' },
-              { label: 'Ödendi', value: 'paid' },
-              { label: 'Beklemede', value: 'pending' },
-              { label: 'Vadesini Geçmiş', value: 'overdue' }
+              { label: 'كل الحالات', value: 'all' },
+              { label: 'مدفوعة', value: 'paid' },
+              { label: 'قيد الانتظار', value: 'pending' },
+              { label: 'متأخرة', value: 'overdue' }
             ]"
             color="neutral"
             variant="ghost"
@@ -446,12 +446,12 @@ function resetForm() {
 
     <template #body>
       <div v-if="invoices" class="space-y-6">
-        <!-- İstatistik Kartları -->
+        <!-- بطاقات الإحصائيات -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <UCard>
             <template #header>
               <div class="flex items-center justify-between">
-                <span class="font-semibold text-gray-700 dark:text-gray-300">Toplam Tutar</span>
+                <span class="font-semibold text-gray-700 dark:text-gray-300">إجمالي المبلغ</span>
                 <UIcon name="i-lucide-credit-card" class="size-5 text-primary" />
               </div>
             </template>
@@ -461,7 +461,7 @@ function resetForm() {
           <UCard>
             <template #header>
               <div class="flex items-center justify-between">
-                <span class="font-semibold text-green-700 dark:text-green-300">Ödenmiş</span>
+                <span class="font-semibold text-green-700 dark:text-green-300">مدفوع</span>
                 <UIcon name="i-lucide-check-circle" class="size-5 text-green-500" />
               </div>
             </template>
@@ -471,7 +471,7 @@ function resetForm() {
           <UCard>
             <template #header>
               <div class="flex items-center justify-between">
-                <span class="font-semibold text-yellow-700 dark:text-yellow-300">Beklemede</span>
+                <span class="font-semibold text-yellow-700 dark:text-yellow-300">قيد الانتظار</span>
                 <UIcon name="i-lucide-clock" class="size-5 text-yellow-500" />
               </div>
             </template>
@@ -481,7 +481,7 @@ function resetForm() {
           <UCard>
             <template #header>
               <div class="flex items-center justify-between">
-                <span class="font-semibold text-red-700 dark:text-red-300">Vadesini Geçmiş</span>
+                <span class="font-semibold text-red-700 dark:text-red-300">متأخرة</span>
                 <UIcon name="i-lucide-alert-circle" class="size-5 text-red-500" />
               </div>
             </template>
@@ -489,7 +489,7 @@ function resetForm() {
           </UCard>
         </div>
 
-        <!-- Faturalar Tablosu -->
+        <!-- الفواتير Tablosu -->
         <UTable
           ref="table"
           :data="filteredInvoices"
@@ -498,7 +498,7 @@ function resetForm() {
         />
 
         <div class="text-sm text-gray-600 dark:text-gray-400">
-          Toplam {{ filteredInvoices.length }} fatura gösteriliyor
+          إجمالي {{ filteredInvoices.length }} فاتورة معروضة
         </div>
       </div>
       <div v-else class="text-center py-12">
@@ -507,7 +507,7 @@ function resetForm() {
     </template>
   </UDashboardPanel>
 
-  <!-- Fatura Ekle Modal -->
+  <!-- إضافة فاتورة Modal -->
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="isAddModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" @click.self="isAddModalOpen = false">
@@ -516,10 +516,10 @@ function resetForm() {
             <div class="flex items-center justify-between mb-4">
               <div>
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                  Yeni Fatura Ekle
+                  إضافة فاتورة جديدة
                 </h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  Yeni bir fatura eklemek için formu doldurun
+                  املأ النموذج لإضافة فاتورة جديدة
                 </p>
               </div>
               <UButton
@@ -537,57 +537,57 @@ function resetForm() {
               class="space-y-4"
               @submit="onSubmitAdd"
             >
-              <UFormField label="Fatura No" name="id">
-                <UInput v-model="state.id" placeholder="Fatura numarasını girin" />
+              <UFormField label="رقم الفاتورة" name="id">
+                <UInput v-model="state.id" placeholder="أدخل رقم الفاتورة" />
               </UFormField>
 
-              <UFormField label="Müşteri Adı" name="customerName">
+              <UFormField label="اسم العميل" name="customerName">
                 <USelectMenu
                   v-model="state.customerName"
                   :options="customerOptions"
-                  placeholder="Müşteri seçin"
+                  placeholder="اختر العميل"
                   searchable
                 />
               </UFormField>
 
-              <UFormField label="Tutar (₺)" name="amount">
+              <UFormField label="المبلغ (₺)" name="amount">
                 <UInput v-model.number="state.amount" type="number" placeholder="0.00" min="0" step="0.01" />
               </UFormField>
 
               <div class="grid grid-cols-2 gap-4">
-                <UFormField label="Düzenlenme Tarihi" name="issueDate">
+                <UFormField label="تاريخ الإصدار" name="issueDate">
                   <UInput v-model="state.issueDate" type="date" />
                 </UFormField>
 
-                <UFormField label="Vade Tarihi" name="dueDate">
+                <UFormField label="تاريخ الاستحقاق" name="dueDate">
                   <UInput v-model="state.dueDate" type="date" />
                 </UFormField>
               </div>
 
-              <UFormField label="Durum" name="status">
+              <UFormField label="الحالة" name="status">
                 <USelect
                   v-model="state.status"
                   :items="[
-                    { label: 'Ödendi', value: 'paid' },
-                    { label: 'Beklemede', value: 'pending' },
-                    { label: 'Vadesini Geçmiş', value: 'overdue' }
+                    { label: 'مدفوعة', value: 'paid' },
+                    { label: 'قيد الانتظار', value: 'pending' },
+                    { label: 'متأخرة', value: 'overdue' }
                   ]"
                 />
               </UFormField>
 
-              <UFormField label="Notlar" name="notes">
-                <UTextarea v-model="state.notes" placeholder="Notlar (opsiyonel)" :rows="3" />
+              <UFormField label="ملاحظات" name="notes">
+                <UTextarea v-model="state.notes" placeholder="ملاحظات (اختياري)" :rows="3" />
               </UFormField>
 
               <div class="flex justify-end gap-2 pt-4">
                 <UButton
-                  label="İptal"
+                  label="إلغاء"
                   color="neutral"
                   variant="ghost"
                   @click="isAddModalOpen = false"
                 />
                 <UButton
-                  label="Ekle"
+                  label="إضافة"
                   type="submit"
                   :loading="isLoading"
                 />
@@ -599,7 +599,7 @@ function resetForm() {
     </Transition>
   </Teleport>
 
-  <!-- Fatura Düzenle Modal -->
+  <!-- تعديل الفاتورة Modal -->
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="isEditModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" @click.self="isEditModalOpen = false">
@@ -608,10 +608,10 @@ function resetForm() {
             <div class="flex items-center justify-between mb-4">
               <div>
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                  Fatura Düzenle
+                  تعديل الفاتورة
                 </h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  Fatura bilgilerini güncelleyin
+                  حدّث بيانات الفاتورة
                 </p>
               </div>
               <UButton
@@ -629,57 +629,57 @@ function resetForm() {
               class="space-y-4"
               @submit="onSubmitEdit"
             >
-              <UFormField label="Fatura No" name="id">
-                <UInput v-model="state.id" placeholder="Fatura numarasını girin" disabled />
+              <UFormField label="رقم الفاتورة" name="id">
+                <UInput v-model="state.id" placeholder="أدخل رقم الفاتورة" disabled />
               </UFormField>
 
-              <UFormField label="Müşteri Adı" name="customerName">
+              <UFormField label="اسم العميل" name="customerName">
                 <USelectMenu
                   v-model="state.customerName"
                   :options="customerOptions"
-                  placeholder="Müşteri seçin"
+                  placeholder="اختر العميل"
                   searchable
                 />
               </UFormField>
 
-              <UFormField label="Tutar (₺)" name="amount">
+              <UFormField label="المبلغ (₺)" name="amount">
                 <UInput v-model.number="state.amount" type="number" placeholder="0.00" min="0" step="0.01" />
               </UFormField>
 
               <div class="grid grid-cols-2 gap-4">
-                <UFormField label="Düzenlenme Tarihi" name="issueDate">
+                <UFormField label="تاريخ الإصدار" name="issueDate">
                   <UInput v-model="state.issueDate" type="date" />
                 </UFormField>
 
-                <UFormField label="Vade Tarihi" name="dueDate">
+                <UFormField label="تاريخ الاستحقاق" name="dueDate">
                   <UInput v-model="state.dueDate" type="date" />
                 </UFormField>
               </div>
 
-              <UFormField label="Durum" name="status">
+              <UFormField label="الحالة" name="status">
                 <USelect
                   v-model="state.status"
                   :items="[
-                    { label: 'Ödendi', value: 'paid' },
-                    { label: 'Beklemede', value: 'pending' },
-                    { label: 'Vadesini Geçmiş', value: 'overdue' }
+                    { label: 'مدفوعة', value: 'paid' },
+                    { label: 'قيد الانتظار', value: 'pending' },
+                    { label: 'متأخرة', value: 'overdue' }
                   ]"
                 />
               </UFormField>
 
-              <UFormField label="Notlar" name="notes">
-                <UTextarea v-model="state.notes" placeholder="Notlar (opsiyonel)" :rows="3" />
+              <UFormField label="ملاحظات" name="notes">
+                <UTextarea v-model="state.notes" placeholder="ملاحظات (اختياري)" :rows="3" />
               </UFormField>
 
               <div class="flex justify-end gap-2 pt-4">
                 <UButton
-                  label="İptal"
+                  label="إلغاء"
                   color="neutral"
                   variant="ghost"
                   @click="isEditModalOpen = false"
                 />
                 <UButton
-                  label="Güncelle"
+                  label="تحديث"
                   type="submit"
                   :loading="isLoading"
                 />
@@ -691,17 +691,17 @@ function resetForm() {
     </Transition>
   </Teleport>
 
-  <!-- Fatura Detayları Modal -->
-  <UModal v-model:open="isViewModalOpen" title="Fatura Detayları" size="lg">
+  <!-- تفاصيل الفاتورة Modal -->
+  <UModal v-model:open="isViewModalOpen" title="تفاصيل الفاتورة" size="lg">
     <div v-if="selectedInvoice" class="space-y-4">
-      <!-- Başlık -->
+      <!-- العنوان -->
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Fatura No</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">رقم الفاتورة</p>
           <p class="text-lg font-semibold">{{ selectedInvoice.id }}</p>
         </div>
         <div>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Durum</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">الحالة</p>
           <UBadge :color="getStatusColor(selectedInvoice.status)" variant="subtle">
             {{ getStatusLabel(selectedInvoice.status) }}
           </UBadge>
@@ -710,36 +710,36 @@ function resetForm() {
 
       <USeparator />
 
-      <!-- Müşteri Bilgileri -->
+      <!-- بيانات العميل -->
       <div>
-        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Müşteri Bilgileri</p>
+        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">بيانات العميل</p>
         <p>{{ selectedInvoice.customerName }}</p>
       </div>
 
       <USeparator />
 
-      <!-- Tarihler -->
+      <!-- التواريخ -->
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Düzenlenme Tarihi</p>
-          <p class="font-semibold">{{ new Date(selectedInvoice.issueDate).toLocaleDateString('tr-TR') }}</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">تاريخ الإصدار</p>
+          <p class="font-semibold">{{ new Date(selectedInvoice.issueDate).toLocaleDateString('ar') }}</p>
         </div>
         <div>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Vade Tarihi</p>
-          <p class="font-semibold">{{ new Date(selectedInvoice.dueDate).toLocaleDateString('tr-TR') }}</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">تاريخ الاستحقاق</p>
+          <p class="font-semibold">{{ new Date(selectedInvoice.dueDate).toLocaleDateString('ar') }}</p>
         </div>
       </div>
 
       <div v-if="selectedInvoice.paidDate">
-        <p class="text-sm text-gray-500 dark:text-gray-400">Ödeme Tarihi</p>
-        <p class="font-semibold">{{ new Date(selectedInvoice.paidDate).toLocaleDateString('tr-TR') }}</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">تاريخ الدفع</p>
+        <p class="font-semibold">{{ new Date(selectedInvoice.paidDate).toLocaleDateString('ar') }}</p>
       </div>
 
       <USeparator />
 
-      <!-- Kalemler -->
+      <!-- البنود -->
       <div v-if="selectedInvoice.items && selectedInvoice.items.length > 0">
-        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Fatura Kalemleri</p>
+        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">بنود الفاتورة</p>
         <div class="space-y-2">
           <div v-for="(item, index) in selectedInvoice.items" :key="index" class="flex justify-between items-start p-2 bg-gray-50 dark:bg-gray-800 rounded">
             <div>
@@ -752,31 +752,31 @@ function resetForm() {
         <USeparator />
       </div>
 
-      <!-- Toplam -->
+      <!-- إجمالي -->
       <div class="bg-primary/10 p-4 rounded-lg">
         <div class="flex justify-between items-center">
-          <p class="text-lg font-semibold">Toplam Tutar:</p>
+          <p class="text-lg font-semibold">إجمالي المبلغ:</p>
           <p class="text-2xl font-bold text-primary">₺{{ selectedInvoice.amount.toFixed(2) }}</p>
         </div>
       </div>
 
-      <!-- Notlar -->
+      <!-- ملاحظات -->
       <div v-if="selectedInvoice.notes">
-        <p class="text-sm text-gray-500 dark:text-gray-400">Notlar</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">ملاحظات</p>
         <p class="text-sm">{{ selectedInvoice.notes }}</p>
       </div>
 
-      <!-- Butonlar -->
+      <!-- الأزرار -->
       <div class="flex gap-2 pt-4">
         <UButton
           icon="i-lucide-download"
-          label="İndir"
+          label="تنزيل"
           color="success"
           variant="soft"
           @click="downloadInvoice(selectedInvoice)"
         />
         <UButton
-          label="Kapat"
+          label="إغلاق"
           color="neutral"
           variant="ghost"
           @click="isViewModalOpen = false"

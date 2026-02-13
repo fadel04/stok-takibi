@@ -9,11 +9,11 @@ const { logTransaction } = useTransactionLogger()
 const table = useTemplateRef('table')
 
 const schema = z.object({
-  name: z.string().min(2, 'En az 2 karakter'),
+  name: z.string().min(2, 'حرفان على الأقل'),
   description: z.string().optional(),
-  price: z.number().min(0, 'Fiyat 0 den küçük olamaz'),
-  stock: z.number().min(0, 'Stok 0 den küçük olamaz'),
-  category: z.enum(['kış', 'yaz'], { message: 'Kategori seçiniz' }),
+  price: z.number().min(0, 'لا يمكن أن يكون السعر أقل من 0'),
+  stock: z.number().min(0, 'لا يمكن أن يكون المخزون أقل من 0'),
+  category: z.enum(['kış', 'yaz'], { message: 'اختر الفئة' }),
   size: z.string().optional()
 })
 
@@ -38,13 +38,13 @@ const searchQuery = ref('')
 const selectedSeason = ref<'all' | 'kış' | 'yaz'>('all')
 
 const seasonTabs = [{
-  label: 'Tümü',
+  label: 'الكل',
   value: 'all'
 }, {
-  label: 'Kış',
+  label: 'شتاء',
   value: 'kış'
 }, {
-  label: 'Yaz',
+  label: 'صيف',
   value: 'yaz'
 }]
 
@@ -69,27 +69,27 @@ const filteredProducts = computed(() => {
 const columns: TableColumn<Product>[] = [
   {
     accessorKey: 'name',
-    header: 'Ürün Adı',
+    header: 'اسم المنتج',
     cell: ({ row }) => row.original.name
   },
   {
     accessorKey: 'description',
-    header: 'Açıklama',
+    header: 'الوصف',
     cell: ({ row }) => row.original.description
   },
   {
     accessorKey: 'size',
-    header: 'Beden Ölçü',
+    header: 'المقاس',
     cell: ({ row }) => row.original.size || '-'
   },
   {
     accessorKey: 'price',
-    header: 'Fiyat',
+    header: 'السعر',
     cell: ({ row }) => `₺${row.original.price.toFixed(2)}`
   },
   {
     accessorKey: 'stock',
-    header: 'Stok',
+    header: 'المخزون',
     cell: ({ row }) => {
       const stock = row.original.stock
       const color = stock > 20 ? 'success' : stock > 10 ? 'warning' : 'error'
@@ -98,12 +98,12 @@ const columns: TableColumn<Product>[] = [
   },
   {
     id: 'stockOut',
-    header: 'Stok Çıkışı',
+    header: 'إخراج مخزون',
     cell: ({ row }) => {
       const stock = row.original.stock
       const UButton = resolveComponent('UButton')
       return h(UButton, {
-        label: 'Çıkış',
+        label: 'إخراج',
         size: 'xs',
         color: 'error',
         variant: 'soft',
@@ -114,7 +114,7 @@ const columns: TableColumn<Product>[] = [
   },
   {
     id: 'actions',
-    header: 'İşlemler',
+    header: 'الإجراءات',
     cell: ({ row }) => {
       const UButton = resolveComponent('UButton')
       return h('div', { class: 'flex gap-2' }, [
@@ -175,8 +175,8 @@ async function submitStockOut() {
 
   if (quantity > product.stock) {
     toast.add({
-      title: 'Hata',
-      description: 'Çıkış miktarı mevcut stoktan fazla olamaz',
+      title: 'خطأ',
+      description: 'لا يمكن أن تتجاوز كمية الإخراج المخزون الحالي',
       icon: 'i-lucide-x',
       color: 'error'
     })
@@ -202,13 +202,13 @@ async function submitStockOut() {
     await refresh()
 
     await logTransaction(
-      'Stok Çıkışı',
+      'إخراج مخزون',
       `${product.name}: ${product.stock} → ${newStock} (-${quantity})`
     )
 
     toast.add({
-      title: 'Stok Çıkışı Başarılı',
-      description: `${product.name}: ${quantity} adet çıkış yapıldı`,
+      title: 'إخراج مخزون نجاح',
+      description: `${product.name}: ${quantity} قطعة تم إخراجها`,
       icon: 'i-lucide-package-minus',
       color: 'success'
     })
@@ -218,8 +218,8 @@ async function submitStockOut() {
     stockOutQuantity.value = 1
   } catch (error: unknown) {
     toast.add({
-      title: 'Hata',
-      description: error instanceof Error ? error.message : 'Stok çıkışı yapılamadı',
+      title: 'خطأ',
+      description: error instanceof Error ? error.message : 'تعذر تنفيذ إخراج المخزون',
       icon: 'i-lucide-x',
       color: 'error'
     })
@@ -251,20 +251,20 @@ async function _updateStock(id: number, change: number) {
 
     const changeText = change > 0 ? `+${change}` : change.toString()
     await logTransaction(
-      'Stok Güncellendi',
+      'تم تحديث المخزون',
       `${product.name}: ${product.stock} → ${newStock} (${changeText})`
     )
 
     toast.add({
-      title: 'Stok G\u00fcncellendi',
-      description: `${product.name}: ${product.stock} \u2192 ${newStock} (${changeText})`,
+      title: 'تم تحديث المخزون',
+      description: `${product.name}: ${product.stock} → ${newStock} (${changeText})`,
       icon: 'i-lucide-package',
       color: 'info'
     })
   } catch (error: unknown) {
     toast.add({
-      title: 'Hata',
-      description: error instanceof Error ? error.message : 'Stok g\u00fcncellenemedi',
+      title: 'خطأ',
+      description: error instanceof Error ? error.message : 'تعذر تحديث المخزون',
       icon: 'i-lucide-x',
       color: 'error'
     })
@@ -275,8 +275,8 @@ async function onSubmitAdd(event: FormSubmitEvent<Schema>) {
   isLoading.value = true
   try {
     await logTransaction(
-      'Ürün Eklendi',
-      `Yeni ürün eklendi: ${event.data.name}`
+      'تمت إضافة منتج',
+      `تمت إضافة منتج جديد: ${event.data.name}`
     )
 
     await $fetch('/api/products', {
@@ -285,8 +285,8 @@ async function onSubmitAdd(event: FormSubmitEvent<Schema>) {
     })
 
     toast.add({
-      title: 'Başarılı',
-      description: 'Ürün eklendi',
+      title: 'نجاح',
+      description: 'تمت إضافة المنتج',
       icon: 'i-lucide-check',
       color: 'success'
     })
@@ -296,8 +296,8 @@ async function onSubmitAdd(event: FormSubmitEvent<Schema>) {
     await refresh()
   } catch (error: unknown) {
     toast.add({
-      title: 'Hata',
-      description: error instanceof Error ? error.message : 'Ürün eklenemedi',
+      title: 'خطأ',
+      description: error instanceof Error ? error.message : 'تعذر إضافة المنتج',
       icon: 'i-lucide-x',
       color: 'error'
     })
@@ -321,13 +321,13 @@ async function onSubmitEdit(event: FormSubmitEvent<Schema>) {
     })
 
     await logTransaction(
-      'Ürün Güncellendi',
-      `Ürün güncellendi: ${event.data.name}`
+      'تم تحديث المنتج',
+      `تم تحديث المنتج: ${event.data.name}`
     )
 
     toast.add({
-      title: 'Başarılı',
-      description: 'Ürün güncellendi',
+      title: 'نجاح',
+      description: 'تم تحديث المنتج',
       icon: 'i-lucide-check',
       color: 'success'
     })
@@ -337,8 +337,8 @@ async function onSubmitEdit(event: FormSubmitEvent<Schema>) {
     await refresh()
   } catch (error: unknown) {
     toast.add({
-      title: 'Hata',
-      description: error instanceof Error ? error.message : 'Ürün güncellenemedi',
+      title: 'خطأ',
+      description: error instanceof Error ? error.message : 'تعذر تحديث المنتج',
       icon: 'i-lucide-x',
       color: 'error'
     })
@@ -350,16 +350,16 @@ async function onSubmitEdit(event: FormSubmitEvent<Schema>) {
 async function deleteProduct(id: number) {
   const confirmed = await new Promise<boolean>((resolve) => {
     toast.add({
-      title: 'Silmek istediğinizden emin misiniz?',
-      description: 'Bu işlem geri alınamaz',
+      title: 'هل أنت متأكد من الحذف؟',
+      description: 'لا يمكن التراجع عن هذا الإجراء',
       actions: [
         {
-          label: 'Evet, Sil',
+          label: 'نعم، احذف',
           color: 'error',
           onClick: () => resolve(true)
         },
         {
-          label: 'İptal',
+          label: 'إلغاء',
           color: 'neutral',
           onClick: () => resolve(false)
         }
@@ -378,14 +378,14 @@ async function deleteProduct(id: number) {
 
     if (product) {
       await logTransaction(
-        'Ürün Silindi',
-        `Ürün silindi: ${product.name}`
+        'تم حذف المنتج',
+        `تم حذف المنتج: ${product.name}`
       )
     }
 
     toast.add({
-      title: 'Başarılı',
-      description: 'Ürün silindi',
+      title: 'نجاح',
+      description: 'تم حذف المنتج',
       icon: 'i-lucide-check',
       color: 'success'
     })
@@ -393,8 +393,8 @@ async function deleteProduct(id: number) {
     await refresh()
   } catch (error: unknown) {
     toast.add({
-      title: 'Hata',
-      description: error instanceof Error ? error.message : 'Ürün silinemedi',
+      title: 'خطأ',
+      description: error instanceof Error ? error.message : 'تعذر حذف المنتج',
       icon: 'i-lucide-x',
       color: 'error'
     })
@@ -415,14 +415,14 @@ function resetForm() {
 <template>
   <UDashboardPanel id="products">
     <template #header>
-      <UDashboardNavbar title="Ürünler">
+      <UDashboardNavbar title="المنتجات">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
 
         <template #right>
           <UButton
-            label="Ürün Ekle"
+            label="إضافة منتج"
             icon="i-lucide-plus"
             @click="openAddModal"
           />
@@ -448,7 +448,7 @@ function resetForm() {
           <UInput
             v-model="searchQuery"
             icon="i-lucide-search"
-            placeholder="Ürün ara..."
+            placeholder="ابحث عن منتج..."
             class="w-64"
           />
         </template>
@@ -465,8 +465,8 @@ function resetForm() {
         />
 
         <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-          <p>Toplam ürün: {{ filteredProducts.length }}</p>
-          <p>Toplam değer: ₺{{ (filteredProducts.reduce((sum, p) => sum + (p.price * p.stock), 0)).toFixed(2) }}</p>
+          <p>إجمالي المنتجات: {{ filteredProducts.length }}</p>
+          <p>إجمالي القيمة: ₺{{ (filteredProducts.reduce((sum, p) => sum + (p.price * p.stock), 0)).toFixed(2) }}</p>
         </div>
       </div>
       <div v-else class="text-center py-12">
@@ -475,7 +475,7 @@ function resetForm() {
     </template>
   </UDashboardPanel>
 
-  <!-- Ürün Ekle Modal -->
+  <!-- إضافة منتج Modal -->
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="isAddModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" @click.self="closeAddModal">
@@ -484,10 +484,10 @@ function resetForm() {
             <div class="flex items-center justify-between mb-4">
               <div>
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                  Yeni Ürün Ekle
+                  إضافة منتج جديد
                 </h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  Yeni bir ürün eklemek için formu doldurun
+                  املأ النموذج لإضافة منتج جديد
                 </p>
               </div>
               <UButton
@@ -506,19 +506,19 @@ function resetForm() {
               @submit="onSubmitAdd"
             >
               <div class="grid grid-cols-2 gap-4">
-                <UFormField label="Ürün Adı" name="name">
-                  <UInput v-model="state.name" placeholder="Ürün adını girin" />
+                <UFormField label="اسم المنتج" name="name">
+                  <UInput v-model="state.name" placeholder="أدخل اسم المنتج" />
                 </UFormField>
 
-                <UFormField label="Beden Ölçü" name="size">
-                  <UInput v-model="state.size" placeholder="Örn: S, M, L, XL" />
+                <UFormField label="المقاس" name="size">
+                  <UInput v-model="state.size" placeholder="مثال: S, M, L, XL" />
                 </UFormField>
               </div>
 
-              <UFormField label="Kategori" name="category">
+              <UFormField label="الفئة" name="category">
                 <div class="flex gap-2">
                   <UButton
-                    v-for="cat in [{ label: 'Kış', value: 'kış' }, { label: 'Yaz', value: 'yaz' }] as const"
+                    v-for="cat in [{ label: 'شتاء', value: 'kış' }, { label: 'صيف', value: 'yaz' }] as const"
                     :key="cat.value"
                     :label="cat.label"
                     :color="state.category === cat.value ? 'primary' : 'neutral'"
@@ -530,7 +530,7 @@ function resetForm() {
               </UFormField>
 
               <div class="grid grid-cols-2 gap-4">
-                <UFormField label="Fiyat (₺)" name="price">
+                <UFormField label="السعر (₺)" name="price">
                   <UInput
                     v-model.number="state.price"
                     type="number"
@@ -540,7 +540,7 @@ function resetForm() {
                   />
                 </UFormField>
 
-                <UFormField label="Stok (Adet)" name="stock">
+                <UFormField label="المخزون (قطعة)" name="stock">
                   <UInput
                     v-model.number="state.stock"
                     type="number"
@@ -549,20 +549,20 @@ function resetForm() {
                   />
                 </UFormField>
 
-                <UFormField label="Açıklama" name="description">
-                  <UTextarea v-model="state.description" placeholder="Ürün açıklamasını girin" :rows="3" />
+                <UFormField label="الوصف" name="description">
+                  <UTextarea v-model="state.description" placeholder="أدخل وصف المنتج" :rows="3" />
                 </UFormField>
               </div>
 
               <div class="flex justify-end gap-2 pt-4">
                 <UButton
-                  label="İptal"
+                  label="إلغاء"
                   color="neutral"
                   variant="ghost"
                   @click="closeAddModal"
                 />
                 <UButton
-                  label="Ekle"
+                  label="إضافة"
                   type="submit"
                   :loading="isLoading"
                 />
@@ -574,7 +574,7 @@ function resetForm() {
     </Transition>
   </Teleport>
 
-  <!-- Stok Çıkış Modal -->
+  <!-- المخزون إخراج Modal -->
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="isStockOutModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" @click.self="isStockOutModalOpen = false">
@@ -583,7 +583,7 @@ function resetForm() {
             <div class="flex items-center justify-between mb-4">
               <div>
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                  Stok Çıkışı
+                  إخراج مخزون
                 </h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   {{ selectedProduct?.name }}
@@ -601,16 +601,16 @@ function resetForm() {
             <div class="space-y-4">
               <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                 <div class="flex items-center justify-between">
-                  <span class="text-sm text-gray-600 dark:text-gray-400">Mevcut Stok:</span>
-                  <span class="text-lg font-semibold text-gray-900 dark:text-white">{{ selectedProduct?.stock }} adet</span>
+                  <span class="text-sm text-gray-600 dark:text-gray-400">المخزون الحالي:</span>
+                  <span class="text-lg font-semibold text-gray-900 dark:text-white">{{ selectedProduct?.stock }} قطعة</span>
                 </div>
               </div>
 
-              <UFormField label="Çıkış Miktarı" name="quantity">
+              <UFormField label="كمية الإخراج" name="quantity">
                 <UInput
                   v-model.number="stockOutQuantity"
                   type="number"
-                  placeholder="Adet"
+                  placeholder="قطعة"
                   min="1"
                   :max="selectedProduct?.stock"
                   size="xl"
@@ -620,22 +620,22 @@ function resetForm() {
 
               <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
                 <div class="flex items-center justify-between">
-                  <span class="text-sm text-blue-600 dark:text-blue-400">Kalan Stok:</span>
+                  <span class="text-sm text-blue-600 dark:text-blue-400">المخزون المتبقي:</span>
                   <span class="text-lg font-semibold text-blue-700 dark:text-blue-300">
-                    {{ Math.max(0, (selectedProduct?.stock || 0) - stockOutQuantity) }} adet
+                    {{ Math.max(0, (selectedProduct?.stock || 0) - stockOutQuantity) }} قطعة
                   </span>
                 </div>
               </div>
 
               <div class="flex justify-end gap-2 pt-4">
                 <UButton
-                  label="İptal"
+                  label="إلغاء"
                   color="neutral"
                   variant="ghost"
                   @click="isStockOutModalOpen = false"
                 />
                 <UButton
-                  label="Çıkış Yap"
+                  label="تنفيذ الإخراج"
                   icon="i-lucide-package-minus"
                   color="error"
                   :loading="isLoading"
@@ -649,7 +649,7 @@ function resetForm() {
     </Transition>
   </Teleport>
 
-  <!-- Ürün Düzenle Modal -->
+  <!-- تعديل المنتج Modal -->
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="isEditModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" @click.self="closeEditModal">
@@ -658,10 +658,10 @@ function resetForm() {
             <div class="flex items-center justify-between mb-4">
               <div>
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                  Ürün Düzenle
+                  تعديل المنتج
                 </h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  Ürün bilgilerini güncelleyin
+                  حدّث بيانات المنتج
                 </p>
               </div>
               <UButton
@@ -680,23 +680,23 @@ function resetForm() {
               @submit="onSubmitEdit"
             >
               <div class="grid grid-cols-2 gap-4">
-                <UFormField label="Ürün Adı" name="name">
-                  <UInput v-model="state.name" placeholder="Ürün adını girin" />
+                <UFormField label="اسم المنتج" name="name">
+                  <UInput v-model="state.name" placeholder="أدخل اسم المنتج" />
                 </UFormField>
 
-                <UFormField label="Beden Ölçü" name="size">
-                  <UInput v-model="state.size" placeholder="Örn: S, M, L, XL" />
+                <UFormField label="المقاس" name="size">
+                  <UInput v-model="state.size" placeholder="مثال: S, M, L, XL" />
                 </UFormField>
               </div>
 
-              <UFormField label="Açıklama" name="description">
-                <UTextarea v-model="state.description" placeholder="Ürün açıklamasını girin" :rows="3" />
+              <UFormField label="الوصف" name="description">
+                <UTextarea v-model="state.description" placeholder="أدخل وصف المنتج" :rows="3" />
               </UFormField>
 
-              <UFormField label="Kategori" name="category">
+              <UFormField label="الفئة" name="category">
                 <div class="flex gap-2">
                   <UButton
-                    v-for="cat in [{ label: 'Kış', value: 'kış' }, { label: 'Yaz', value: 'yaz' }] as const"
+                    v-for="cat in [{ label: 'شتاء', value: 'kış' }, { label: 'صيف', value: 'yaz' }] as const"
                     :key="cat.value"
                     :label="cat.label"
                     :color="state.category === cat.value ? 'primary' : 'neutral'"
@@ -708,7 +708,7 @@ function resetForm() {
               </UFormField>
 
               <div class="grid grid-cols-2 gap-4">
-                <UFormField label="Fiyat (₺)" name="price">
+                <UFormField label="السعر (₺)" name="price">
                   <UInput
                     v-model.number="state.price"
                     type="number"
@@ -718,7 +718,7 @@ function resetForm() {
                   />
                 </UFormField>
 
-                <UFormField label="Stok (Adet)" name="stock">
+                <UFormField label="المخزون (قطعة)" name="stock">
                   <UInput
                     v-model.number="state.stock"
                     type="number"
@@ -730,13 +730,13 @@ function resetForm() {
 
               <div class="flex justify-end gap-2 pt-4">
                 <UButton
-                  label="İptal"
+                  label="إلغاء"
                   color="neutral"
                   variant="ghost"
                   @click="closeEditModal"
                 />
                 <UButton
-                  label="Güncelle"
+                  label="تحديث"
                   type="submit"
                   :loading="isLoading"
                 />

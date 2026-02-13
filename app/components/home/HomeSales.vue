@@ -21,7 +21,7 @@ interface Transaction {
 interface StockTransaction {
   id: string
   date: string
-  type: 'giriş' | 'çıkış' | 'güncelleme'
+  type: 'دخول' | 'خروج' | 'تحديث'
   product: string
   quantity: number
   user: string
@@ -32,23 +32,23 @@ const { data: transactions } = await useFetch<Transaction[]>('/api/transactions'
 const { data } = await useAsyncData('stock-movements', async () => {
   const transactionsList = transactions.value || []
 
-  // Son 10 işlemi al ve stok hareketlerine dönüştür
+  // تحويل آخر 10 عمليات إلى حركات مخزون
   const stockMovements: StockTransaction[] = transactionsList
     .slice(0, 10)
     .map((t) => {
-      // İşlem tipini belirle
-      let type: 'giriş' | 'çıkış' | 'güncelleme' = 'güncelleme'
+      // تحديد نوع الحركة
+      let type: 'دخول' | 'خروج' | 'تحديث' = 'تحديث'
       let quantity = 0
 
-      // Description'dan ürün adı ve miktarı çıkar
+      // استخراج اسم المنتج والكمية من الوصف
       const match = t.description.match(/(.+?):\s*(\d+)\s*→\s*(\d+)\s*\(([+-]\d+)\)/)
 
       if (match) {
-        const productName = match[1] || 'Bilinmeyen'
+        const productName = match[1] || 'غير معروف'
         const diff = parseInt(match[4]!)
 
         quantity = Math.abs(diff)
-        type = diff > 0 ? 'giriş' : 'çıkış'
+        type = diff > 0 ? 'دخول' : 'خروج'
 
         return {
           id: t.id.toString(),
@@ -60,14 +60,14 @@ const { data } = await useAsyncData('stock-movements', async () => {
         }
       }
 
-      // Yeni ürün ekleme
-      const addMatch = t.description.match(/Yeni ürün eklendi:\s*(.+)/)
+      // إضافة منتج جديد
+      const addMatch = t.description.match(/تمت إضافة منتج جديد:\s*(.+)/)
       if (addMatch) {
         return {
           id: t.id.toString(),
           date: t.timestamp,
-          type: 'giriş',
-          product: addMatch[1] || 'Bilinmeyen',
+          type: 'دخول',
+          product: addMatch[1] || 'غير معروف',
           quantity: 0,
           user: t.username
         }
@@ -76,8 +76,8 @@ const { data } = await useAsyncData('stock-movements', async () => {
       return {
         id: t.id.toString(),
         date: t.timestamp,
-        type: 'güncelleme',
-        product: 'Bilinmeyen',
+        type: 'تحديث',
+        product: 'غير معروف',
         quantity: 0,
         user: t.username
       }
@@ -97,18 +97,18 @@ const columns: TableColumn<StockTransaction>[] = [
   },
   {
     accessorKey: 'date',
-    header: 'Tarih',
+    header: 'التاريخ',
     cell: ({ row }) => row.getValue('date')
   },
   {
     accessorKey: 'type',
-    header: 'İşlem Tipi',
+    header: 'نوع العملية',
     cell: ({ row }) => {
       const type = row.getValue('type') as string
       const color = {
-        giriş: 'success' as const,
-        çıkış: 'error' as const,
-        güncelleme: 'neutral' as const
+        دخول: 'success' as const,
+        خروج: 'error' as const,
+        تحديث: 'neutral' as const
       }[type]
 
       return h(UBadge, { class: 'capitalize', variant: 'subtle', color }, () => type)
@@ -116,22 +116,22 @@ const columns: TableColumn<StockTransaction>[] = [
   },
   {
     accessorKey: 'product',
-    header: 'Ürün'
+    header: 'المنتج'
   },
   {
     accessorKey: 'quantity',
-    header: () => h('div', { class: 'text-right' }, 'Miktar'),
+    header: () => h('div', { class: 'text-right' }, 'الكمية'),
     cell: ({ row }) => {
       const quantity = row.getValue('quantity') as number
       const type = row.getValue('type') as string
-      const sign = type === 'giriş' ? '+' : type === 'çıkış' ? '-' : ''
+      const sign = type === 'دخول' ? '+' : type === 'خروج' ? '-' : ''
 
       return h('div', { class: 'text-right font-medium' }, `${sign}${quantity}`)
     }
   },
   {
     accessorKey: 'user',
-    header: 'Kullanıcı'
+    header: 'المستخدم'
   }
 ]
 </script>

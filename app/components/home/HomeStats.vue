@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 function formatCurrency(value: number): string {
-  return value.toLocaleString('tr-TR', {
+  return value.toLocaleString('ar', {
     style: 'currency',
     currency: 'TRY',
     maximumFractionDigits: 0
@@ -29,35 +29,35 @@ const { data: products, status } = await useFetch<Product[]>('/api/products')
 const { data: stats } = await useAsyncData<Stat[]>('stats', async () => {
   const productsList = products.value || []
 
-  // Toplam stok hesaplama
+  // حساب إجمالي المخزون
   const totalStock = productsList.reduce((sum, p) => sum + (p.stock || 0), 0)
 
-  // Ürün sayısını hesaplama
+  // حساب عدد المنتجات
   const totalProducts = productsList.length
 
-  // Düşük stoklu ürünler (10'dan az)
+  // المنتجات منخفضة المخزون (أقل من 10)
   const lowStockProducts = productsList.filter(p => p.stock < 10).length
 
-  // Toplam stok değeri hesaplama
+  // حساب إجمالي قيمة المخزون
   const totalValue = productsList.reduce((sum, p) => sum + (p.price * p.stock), 0)
 
   return [{
-    title: 'Toplam Stok',
+    title: 'إجمالي المخزون',
     icon: 'i-lucide-package',
     value: totalStock,
     variation: randomInt(-5, 15)
   }, {
-    title: 'Ürünler',
+    title: 'المنتجات',
     icon: 'i-lucide-boxes',
     value: totalProducts,
     variation: randomInt(-2, 8)
   }, {
-    title: 'Stok Değeri',
+    title: 'قيمة المخزون',
     icon: 'i-lucide-circle-dollar-sign',
     value: formatCurrency(totalValue),
     variation: randomInt(-10, 20)
   }, {
-    title: 'Düşük Stok',
+    title: 'مخزون منخفض',
     icon: 'i-lucide-alert-triangle',
     value: lowStockProducts,
     variation: randomInt(-30, -5)

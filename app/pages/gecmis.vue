@@ -7,27 +7,27 @@ const activeTab = ref<'all' | 'inputs' | 'outputs'>('all')
 const selectedCategory = ref<'all' | 'kış' | 'yaz'>('all')
 
 const tabs = [{
-  label: 'Tümü',
+  label: 'الكل',
   value: 'all',
   icon: 'i-lucide-list'
 }, {
-  label: 'Girişler',
+  label: 'المدخلات',
   value: 'inputs',
   icon: 'i-lucide-package-plus'
 }, {
-  label: 'Çıkışlar',
+  label: 'المخرجات',
   value: 'outputs',
   icon: 'i-lucide-package-minus'
 }]
 
 const categoryTabs = [{
-  label: 'Tümü',
+  label: 'الكل',
   value: 'all'
 }, {
-  label: 'Kış',
+  label: 'شتاء',
   value: 'kış'
 }, {
-  label: 'Yaz',
+  label: 'صيف',
   value: 'yaz'
 }]
 
@@ -48,12 +48,12 @@ const filteredTransactions = computed(() => {
 
   if (activeTab.value === 'inputs') {
     filtered = filtered.filter(t =>
-      t.action === 'Ürün Eklendi'
+      t.action === 'تمت إضافة منتج'
       || (t.description?.includes('→') && t.description?.includes('+'))
     )
   } else if (activeTab.value === 'outputs') {
     filtered = filtered.filter(t =>
-      t.action === 'Stok Çıkışı'
+      t.action === 'إخراج مخزون'
       || (t.description?.includes('→') && t.description?.includes('-'))
     )
   }
@@ -132,17 +132,17 @@ const extractProductCategory = (description: string): string => {
 
 const getActionColor = (action: string): 'success' | 'info' | 'primary' | 'error' | 'warning' | 'neutral' => {
   const actionColors: Record<string, 'success' | 'info' | 'primary' | 'error' | 'warning' | 'neutral'> = {
-    'Ürün Eklendi': 'success',
-    'Stok Güncellendi': 'info',
-    'Stok Çıkışı': 'error',
-    'Müşteri Eklendi': 'success',
-    'Fatura Oluşturuldu': 'primary',
-    'Ürün Silindi': 'error',
-    'Ürün Güncellendi': 'info',
-    'Fiyat Güncellendi': 'warning',
-    'Fatura Ödendi': 'success',
-    'Müşteri Bilgileri Güncellendi': 'info',
-    'Müşteri Silindi': 'error'
+    'تمت إضافة منتج': 'success',
+    'تم تحديث المخزون': 'info',
+    'إخراج مخزون': 'error',
+    'تمت إضافة عميل': 'success',
+    'تم إنشاء فاتورة': 'primary',
+    'تم حذف المنتج': 'error',
+    'تم تحديث المنتج': 'info',
+    'تم تحديث السعر': 'warning',
+    'تم دفع الفاتورة': 'success',
+    'تم تحديث بيانات العميل': 'info',
+    'تم حذف العميل': 'error'
   }
   return actionColors[action] || 'neutral'
 }
@@ -152,16 +152,16 @@ const printReport = () => {
   if (!printWindow) return
 
   const tabName = activeTab.value === 'all'
-    ? 'Tümü'
+    ? 'الكل'
     : activeTab.value === 'inputs'
-      ? 'Girişler'
-      : 'Çıkışlar'
+      ? 'المدخلات'
+      : 'المخرجات'
 
   const categoryName = selectedCategory.value === 'all'
-    ? 'Tümü'
+    ? 'الكل'
     : selectedCategory.value === 'kış'
-      ? 'Kış'
-      : 'Yaz'
+      ? 'شتاء'
+      : 'صيف'
 
   const htmlContent = `<!DOCTYPE html>
 <html>
@@ -232,20 +232,20 @@ const printReport = () => {
   <body>
     <div class="header">
       <h1>${tabName} Raporu</h1>
-      <p>Tarih: ${new Date().toLocaleDateString('tr-TR')}</p>
-      <p>Katalog: ${categoryName}</p>
-      <p>Toplam Kayıt: ${filteredTransactions.value.length}</p>
+      <p>التاريخ: ${new Date().toLocaleDateString('ar')}</p>
+      <p>الفئة: ${categoryName}</p>
+      <p>إجمالي السجلات: ${filteredTransactions.value.length}</p>
     </div>
     <table>
       <thead>
         <tr>
           <th>No</th>
-          <th>Kullanıcı Adı</th>
-          <th>Zaman</th>
-          <th>İşlem Türü</th>
-          <th>Ürün Adı</th>
-          <th>Beden Ölçü</th>
-          <th>Açıklama</th>
+          <th>اسم المستخدم</th>
+          <th>الوقت</th>
+          <th>نوع العملية</th>
+          <th>اسم المنتج</th>
+          <th>المقاس</th>
+          <th>الوصف</th>
         </tr>
       </thead>
       <tbody>
@@ -267,7 +267,7 @@ const printReport = () => {
       </tbody>
     </table>
 <div class="footer">
-  <p>Yazdırma Tarihi: ${new Date().toLocaleString('tr-TR')}</p>
+  <p>تاريخ الطباعة: ${new Date().toLocaleString('ar')}</p>
 </div>
     <` + `/body>
     <` + `/html>`
@@ -280,7 +280,7 @@ const printReport = () => {
 }
 
 useSeoMeta({
-  title: 'İşlem Geçmişi'
+  title: 'سجل العمليات'
 })
 
 definePageMeta({
@@ -291,7 +291,7 @@ definePageMeta({
 <template>
   <UDashboardPanel id="gecmis">
     <template #header>
-      <UDashboardNavbar title="İşlem Geçmişi">
+      <UDashboardNavbar title="سجل العمليات">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
@@ -304,7 +304,7 @@ definePageMeta({
               variant="outline"
               @click="printReport"
             >
-              Yazdır
+              طباعة
             </UButton>
             <UButton
               icon="i-lucide-refresh-cw"
@@ -313,7 +313,7 @@ definePageMeta({
               @click="() => refresh()"
               :loading="status === 'pending'"
             >
-              Yenile
+              تحديث
             </UButton>
           </div>
         </template>
@@ -355,7 +355,7 @@ definePageMeta({
           <UInput
             v-model="searchQuery"
             icon="i-lucide-search"
-            placeholder="Ara..."
+            placeholder="ابحث..."
             class="w-64"
           />
         </template>
@@ -366,13 +366,13 @@ definePageMeta({
       <div v-if="status === 'pending'" class="flex flex-col items-center justify-center py-12">
         <UIcon name="i-lucide-loader-2" class="size-8 animate-spin text-gray-400 dark:text-gray-500 mb-3" />
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          Yükleniyor...
+          جارٍ التحميل...
         </p>
       </div>
 
       <div v-else-if="!filteredTransactions.length" class="flex flex-col items-center justify-center py-12">
         <UIcon name="i-lucide-file-text" class="size-12 text-gray-400 dark:text-gray-500 mb-3" />
-        <p class="text-sm text-gray-600 dark:text-gray-400">İşlem bulunamadı</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">لم يتم العثور على عمليات</p>
       </div>
 
       <div v-else class="space-y-4">
@@ -384,22 +384,22 @@ definePageMeta({
                   No
                 </th>
                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Kullanıcı Adı
+                  اسم المستخدم
                 </th>
                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  İşlem Zamanı
+                  وقت العملية
                 </th>
                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  İşlem Türü
+                  نوع العملية
                 </th>
                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Ürün Adı
+                  اسم المنتج
                 </th>
                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Beden Ölçü
+                  المقاس
                 </th>
                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Açıklama
+                  الوصف
                 </th>
               </tr>
             </thead>
@@ -440,10 +440,10 @@ definePageMeta({
           </table>
         </div>
 
-        <!-- İstatistikler -->
+        <!-- الإحصائيات -->
         <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-800">
-          <span>Toplam İşlem: {{ filteredTransactions.length }}</span>
-          <span>{{ new Date().toLocaleDateString('tr-TR') }}</span>
+          <span>إجمالي العمليات: {{ filteredTransactions.length }}</span>
+          <span>{{ new Date().toLocaleDateString('ar') }}</span>
         </div>
       </div>
     </template>

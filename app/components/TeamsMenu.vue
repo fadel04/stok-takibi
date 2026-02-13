@@ -4,10 +4,10 @@ defineProps<{
 }>()
 
 const team = {
-  label: 'Stok Takibi',
+  label: 'إدارة المخزون',
   avatar: {
     src: '/logo.png',
-    alt: 'Stok Takibi'
+    alt: 'إدارة المخزون'
   }
 }
 </script>

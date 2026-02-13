@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
 
     throw createError({
       statusCode: 401,
-      statusMessage: 'E-posta veya şifre yanlış'
+      statusMessage: 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
     })
   }
 
@@ -57,7 +57,7 @@ export default defineEventHandler(async (event) => {
       if (emailExists) {
         throw createError({
           statusCode: 400,
-          statusMessage: 'E-posta zaten kullanılıyor'
+          statusMessage: 'البريد الإلكتروني مستخدم بالفعل'
         })
       }
     }

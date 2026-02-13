@@ -2,12 +2,12 @@
 import type { NavigationMenuItem } from '@nuxt/ui'
 
 const links = [[{
-  label: 'Genel',
+  label: 'عام',
   icon: 'i-lucide-user',
   to: '/settings',
   exact: true
 // }, {
-//   label: 'Güvenlik',
+//   label: 'الأمان',
 //   icon: 'i-lucide-shield',
 //   to: '/settings/security'
 // }], [{
@@ -21,7 +21,7 @@ const links = [[{
 <template>
   <UDashboardPanel id="settings" :ui="{ body: 'lg:py-12' }">
     <template #header>
-      <UDashboardNavbar title="Ayarlar">
+      <UDashboardNavbar title="الإعدادات">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>

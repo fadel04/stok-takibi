@@ -6,9 +6,9 @@ const { currentUser, setUser, loadUser } = useCurrentUser()
 const router = useRouter()
 
 const profileSchema = z.object({
-  name: z.string().min(2, 'Çok kısa'),
-  email: z.string().email('Geçersiz e-posta'),
-  username: z.string().min(2, 'Çok kısa'),
+  name: z.string().min(2, 'قصير جدًا'),
+  email: z.string().email('بريد إلكتروني غير صالح'),
+  username: z.string().min(2, 'قصير جدًا'),
   bio: z.string().optional()
 })
 
@@ -19,9 +19,11 @@ onMounted(() => {
   if (!currentUser.value) {
     router.push('/login')
   } else {
+    const user = currentUser.value as typeof currentUser.value & { username?: string, bio?: string }
     profile.name = currentUser.value.name || ''
     profile.email = currentUser.value.email || ''
-    profile.username = currentUser.value.username || ''
+    profile.username = user.username || ''
+    profile.bio = user.bio || ''
   }
 })
 
@@ -29,48 +31,48 @@ const profile = reactive<Partial<ProfileSchema>>({
   name: '',
   email: '',
   username: '',
-  bio: undefined
+  bio: ''
 })
 const toast = useToast()
 
 async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
-  if (currentUser.value) {
-    const updatedUser = {
-      ...currentUser.value,
-      name: event.data.name,
-      email: event.data.email,
-      username: event.data.username,
-      bio: event.data.bio
-    }
+  if (!currentUser.value) return
 
-    try {
-      await $fetch('/api/users', {
-        method: 'PUT',
-        body: {
-          id: currentUser.value.id,
-          name: event.data.name,
-          email: event.data.email,
-          username: event.data.username,
-          bio: event.data.bio
-        }
-      })
+  const updatedUser = {
+    ...currentUser.value,
+    name: event.data.name,
+    email: event.data.email,
+    username: event.data.username,
+    bio: event.data.bio
+  }
 
-      setUser(updatedUser)
+  try {
+    await $fetch('/api/users', {
+      method: 'PUT',
+      body: {
+        id: currentUser.value.id,
+        name: event.data.name,
+        email: event.data.email,
+        username: event.data.username,
+        bio: event.data.bio
+      }
+    })
 
-      toast.add({
-        title: 'Başarılı',
-        description: 'Ayarlarınız güncellendi.',
-        icon: 'i-lucide-check',
-        color: 'success'
-      })
-    } catch (error) {
-      toast.add({
-        title: 'Hata',
-        description: error instanceof Error ? error.message : 'Ayarlar güncellenemedi',
-        icon: 'i-lucide-x',
-        color: 'error'
-      })
-    }
+    setUser(updatedUser)
+
+    toast.add({
+      title: 'نجاح',
+      description: 'تم تحديث الإعدادات.',
+      icon: 'i-lucide-check',
+      color: 'success'
+    })
+  } catch (error) {
+    toast.add({
+      title: 'خطأ',
+      description: error instanceof Error ? error.message : 'تعذر تحديث الإعدادات',
+      icon: 'i-lucide-x',
+      color: 'error'
+    })
   }
 }
 </script>
@@ -83,15 +85,15 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
     @submit="onSubmit"
   >
     <UPageCard
-      title="Profil"
-      description="Bu bilgiler herkese açık olarak görüntülenecektir."
+      title="الملف الشخصي"
+      description="ستكون هذه المعلومات مرئية للجميع."
       variant="naked"
       orientation="horizontal"
       class="mb-4"
     >
       <UButton
         form="settings"
-        label="Değişiklikleri kaydet"
+        label="حفظ التغييرات"
         color="neutral"
         type="submit"
         class="w-fit lg:ms-auto"
@@ -101,8 +103,8 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
     <UPageCard variant="subtle">
       <UFormField
         name="name"
-        label="İsim"
-        description="Fişlerde, faturalarda ve diğer iletişimlerde görünecektir."
+        label="الاسم"
+        description="سيظهر في الإيصالات والفواتير ووسائل التواصل الأخرى."
         required
         class="flex max-sm:flex-col justify-between items-start gap-4"
       >
@@ -114,8 +116,8 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
       <USeparator />
       <UFormField
         name="email"
-        label="E-posta"
-        description="Oturum açmak, e-posta makbuzları ve ürün güncellemeleri için kullanılır."
+        label="البريد الإلكتروني"
+        description="يُستخدم لتسجيل الدخول وإيصالات البريد الإلكتروني وتحديثات المنتجات."
         required
         class="flex max-sm:flex-col justify-between items-start gap-4"
       >
@@ -128,8 +130,8 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
       <USeparator />
       <UFormField
         name="username"
-        label="Kullanıcı adı"
-        description="Giriş için benzersiz kullanıcı adınız ve profil URL'niz."
+        label="اسم المستخدم"
+        description="اسم المستخدم الفريد لتسجيل الدخول ورابط ملفك الشخصي."
         required
         class="flex max-sm:flex-col justify-between items-start gap-4"
       >
@@ -140,10 +142,11 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
         />
       </UFormField>
       <USeparator />
-      <!-- <UFormField
+      <!--
+      <UFormField
         name="bio"
-        label="Biyografi"
-        description="Profiliniz için kısa açıklama. URL'ler hiper bağlantılıdır."
+        label="نبذة"
+        description="وصف قصير لملفك الشخصي. الروابط تكون قابلة للنقر."
         class="flex max-sm:flex-col justify-between items-start gap-4"
         :ui="{ container: 'w-full' }"
       >
@@ -153,7 +156,8 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
           autoresize
           class="w-full"
         />
-      </UFormField> -->
+      </UFormField>
+      -->
     </UPageCard>
   </UForm>
 </template>

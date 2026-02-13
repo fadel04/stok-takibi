@@ -2,19 +2,19 @@
 import { DateFormatter, getLocalTimeZone, CalendarDate, today } from '@internationalized/date'
 import type { Range } from '~/types'
 
-const df = new DateFormatter('en-US', {
+const df = new DateFormatter('ar', {
   dateStyle: 'medium'
 })
 
 const selected = defineModel<Range>({ required: true })
 
 const ranges = [
-  { label: 'Son 7 gün', days: 7 },
-  { label: 'Son 14 gün', days: 14 },
-  { label: 'Son 30 gün', days: 30 },
-  { label: 'Son 3 ay', months: 3 },
-  { label: 'Son 6 ay', months: 6 },
-  { label: 'Son yıl', years: 1 }
+  { label: 'آخر 7 أيام', days: 7 },
+  { label: 'آخر 14 يومًا', days: 14 },
+  { label: 'آخر 30 يومًا', days: 30 },
+  { label: 'آخر 3 أشهر', months: 3 },
+  { label: 'آخر 6 أشهر', months: 6 },
+  { label: 'آخر سنة', years: 1 }
 ]
 
 const toCalendarDate = (date: Date) => {
@@ -95,7 +95,7 @@ const selectRange = (range: { days?: number, months?: number, years?: number }) 
           </template>
         </template>
         <template v-else>
-          Tarih seç
+          اختر تاريخًا
         </template>
       </span>
 

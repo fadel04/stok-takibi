@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
     if (!existing) {
       throw createError({
         statusCode: 404,
-        statusMessage: 'Ürün bulunamadı'
+        statusMessage: 'المنتج غير موجود'
       })
     }
 
@@ -72,12 +72,12 @@ export default defineEventHandler(async (event) => {
     if (!existing) {
       throw createError({
         statusCode: 404,
-        statusMessage: 'Ürün bulunamadı'
+        statusMessage: 'المنتج غير موجود'
       })
     }
 
     await db.delete(products).where(eq(products.id, parseInt(id)))
-    return { success: true, message: 'Ürün silindi' }
+    return { success: true, message: 'تم حذف المنتج' }
   }
 
   throw createError({

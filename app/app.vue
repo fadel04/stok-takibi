@@ -17,8 +17,8 @@ useHead({
   }
 })
 
-const title = 'قالب لوحة تحكم Nuxt'
-const description = 'قالب لوحة تحكم احترافي مبني باستخدام Nuxt UI، يتضمن صفحات متعددة وتصورًا للبيانات وواجهات إدارة قوية.'
+const title = 'تتبع المخزون - مول عبداللطيف'
+const description = 'mallabdullatif'
 
 useSeoMeta({
   title,

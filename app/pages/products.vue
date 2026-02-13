@@ -85,7 +85,7 @@ const columns: TableColumn<Product>[] = [
   {
     accessorKey: 'price',
     header: 'السعر',
-    cell: ({ row }) => `₺${row.original.price.toFixed(2)}`
+    cell: ({ row }) => `MRU ${row.original.price.toFixed(2)}`
   },
   {
     accessorKey: 'stock',
@@ -466,7 +466,7 @@ function resetForm() {
 
         <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
           <p>إجمالي المنتجات: {{ filteredProducts.length }}</p>
-          <p>إجمالي القيمة: ₺{{ (filteredProducts.reduce((sum, p) => sum + (p.price * p.stock), 0)).toFixed(2) }}</p>
+          <p>إجمالي القيمة: MRU {{ (filteredProducts.reduce((sum, p) => sum + (p.price * p.stock), 0)).toFixed(2) }}</p>
         </div>
       </div>
       <div v-else class="text-center py-12">
@@ -530,7 +530,7 @@ function resetForm() {
               </UFormField>
 
               <div class="grid grid-cols-2 gap-4">
-                <UFormField label="السعر (₺)" name="price">
+                <UFormField label="السعر (MRU)" name="price">
                   <UInput
                     v-model.number="state.price"
                     type="number"
@@ -708,7 +708,7 @@ function resetForm() {
               </UFormField>
 
               <div class="grid grid-cols-2 gap-4">
-                <UFormField label="السعر (₺)" name="price">
+                <UFormField label="السعر (MRU)" name="price">
                   <UInput
                     v-model.number="state.price"
                     type="number"

@@ -119,7 +119,7 @@ const columns: TableColumn<Invoice>[] = [
   {
     accessorKey: 'amount',
     header: 'المبلغ',
-    cell: ({ row }) => `₺${row.original.amount.toFixed(2)}`
+    cell: ({ row }) => `MRU ${row.original.amount.toFixed(2)}`
   },
   {
     accessorKey: 'issueDate',
@@ -323,12 +323,12 @@ ${invoice.customerName}
 
   invoice.items?.forEach(item => {
     content += `\n${item.description}
-  الكمية: ${item.quantity} x ₺${item.unitPrice.toFixed(2)} = ₺${item.total.toFixed(2)}\n`
+  الكمية: ${item.quantity} x MRU ${item.unitPrice.toFixed(2)} = MRU ${item.total.toFixed(2)}\n`
   })
 
   content += `
 --------------------------------------------
-إجمالي المبلغ: ₺${invoice.amount.toFixed(2)}
+إجمالي المبلغ: MRU ${invoice.amount.toFixed(2)}
 الحالة: ${getStatusLabel(invoice.status)}
 الملاحظات: ${invoice.notes || '-'}
 --------------------------------------------
@@ -369,7 +369,7 @@ async function deleteInvoice(id: string) {
     if (invoice) {
       await logTransaction(
         'تم حذف الفاتورة',
-        `تم حذف الفاتورة: ${invoice.id} - العميل: ${invoice.customerName} - المبلغ: ₺${invoice.amount.toFixed(2)}`
+        `تم حذف الفاتورة: ${invoice.id} - العميل: ${invoice.customerName} - المبلغ: MRU ${invoice.amount.toFixed(2)}`
       )
     }
 
@@ -455,7 +455,7 @@ function resetForm() {
                 <UIcon name="i-lucide-credit-card" class="size-5 text-primary" />
               </div>
             </template>
-            <p class="text-3xl font-bold text-primary">₺{{ stats.total.toFixed(2) }}</p>
+            <p class="text-3xl font-bold text-primary">MRU {{ stats.total.toFixed(2) }}</p>
           </UCard>
 
           <UCard>
@@ -465,7 +465,7 @@ function resetForm() {
                 <UIcon name="i-lucide-check-circle" class="size-5 text-green-500" />
               </div>
             </template>
-            <p class="text-3xl font-bold text-green-500">₺{{ stats.paid.toFixed(2) }}</p>
+            <p class="text-3xl font-bold text-green-500">MRU {{ stats.paid.toFixed(2) }}</p>
           </UCard>
 
           <UCard>
@@ -475,7 +475,7 @@ function resetForm() {
                 <UIcon name="i-lucide-clock" class="size-5 text-yellow-500" />
               </div>
             </template>
-            <p class="text-3xl font-bold text-yellow-500">₺{{ stats.pending.toFixed(2) }}</p>
+            <p class="text-3xl font-bold text-yellow-500">MRU {{ stats.pending.toFixed(2) }}</p>
           </UCard>
 
           <UCard>
@@ -485,7 +485,7 @@ function resetForm() {
                 <UIcon name="i-lucide-alert-circle" class="size-5 text-red-500" />
               </div>
             </template>
-            <p class="text-3xl font-bold text-red-500">₺{{ stats.overdue.toFixed(2) }}</p>
+            <p class="text-3xl font-bold text-red-500">MRU {{ stats.overdue.toFixed(2) }}</p>
           </UCard>
         </div>
 
@@ -550,7 +550,7 @@ function resetForm() {
                 />
               </UFormField>
 
-              <UFormField label="المبلغ (₺)" name="amount">
+              <UFormField label="المبلغ (MRU)" name="amount">
                 <UInput v-model.number="state.amount" type="number" placeholder="0.00" min="0" step="0.01" />
               </UFormField>
 
@@ -642,7 +642,7 @@ function resetForm() {
                 />
               </UFormField>
 
-              <UFormField label="المبلغ (₺)" name="amount">
+              <UFormField label="المبلغ (MRU)" name="amount">
                 <UInput v-model.number="state.amount" type="number" placeholder="0.00" min="0" step="0.01" />
               </UFormField>
 
@@ -744,9 +744,9 @@ function resetForm() {
           <div v-for="(item, index) in selectedInvoice.items" :key="index" class="flex justify-between items-start p-2 bg-gray-50 dark:bg-gray-800 rounded">
             <div>
               <p class="font-medium">{{ item.description }}</p>
-              <p class="text-sm text-gray-500">{{ item.quantity }} x ₺{{ item.unitPrice.toFixed(2) }}</p>
+              <p class="text-sm text-gray-500">{{ item.quantity }} x MRU {{ item.unitPrice.toFixed(2) }}</p>
             </div>
-            <p class="font-semibold">₺{{ item.total.toFixed(2) }}</p>
+            <p class="font-semibold">MRU {{ item.total.toFixed(2) }}</p>
           </div>
         </div>
         <USeparator />
@@ -756,7 +756,7 @@ function resetForm() {
       <div class="bg-primary/10 p-4 rounded-lg">
         <div class="flex justify-between items-center">
           <p class="text-lg font-semibold">إجمالي المبلغ:</p>
-          <p class="text-2xl font-bold text-primary">₺{{ selectedInvoice.amount.toFixed(2) }}</p>
+          <p class="text-2xl font-bold text-primary">MRU {{ selectedInvoice.amount.toFixed(2) }}</p>
         </div>
       </div>
 

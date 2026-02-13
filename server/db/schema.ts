@@ -38,3 +38,13 @@ export const invoices = sqliteTable('invoices', {
   createdAt: text('created_at').default('CURRENT_TIMESTAMP'),
   items: text('items').notNull()
 })
+
+export const expenses = sqliteTable('expenses', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  title: text('title').notNull(),
+  category: text('category').notNull(),
+  amount: real('amount').notNull(),
+  expenseDate: text('expense_date').notNull(),
+  notes: text('notes'),
+  createdAt: text('created_at').default('CURRENT_TIMESTAMP')
+})

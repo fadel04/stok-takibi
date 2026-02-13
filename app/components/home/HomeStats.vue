@@ -9,7 +9,7 @@ const props = defineProps<{
 function formatCurrency(value: number): string {
   return value.toLocaleString('ar', {
     style: 'currency',
-    currency: 'TRY',
+    currency: 'MRU',
     maximumFractionDigits: 0
   })
 }

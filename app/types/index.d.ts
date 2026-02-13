@@ -93,6 +93,16 @@ export interface Transaction {
   description: string
 }
 
+export interface Expense {
+  id: number
+  title: string
+  category: string
+  amount: number
+  expenseDate: string
+  notes?: string | null
+  createdAt?: string | null
+}
+
 export type Period = 'daily' | 'weekly' | 'monthly'
 
 export interface Range {

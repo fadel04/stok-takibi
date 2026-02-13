@@ -27,6 +27,13 @@ const links = [[{
 //     open.value = false
 //   }
 }, {
+  label: 'المحاسبة',
+  icon: 'i-lucide-calculator',
+  to: '/accounting',
+  onSelect: () => {
+    open.value = false
+  }
+}, {
   label: 'السجل',
   icon: 'i-lucide-history',
   to: '/gecmis',

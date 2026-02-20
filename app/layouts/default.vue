@@ -37,6 +37,11 @@ const allLinks: NavigationMenuItem[] = [{
   to: '/gecmis',
   onSelect: () => { open.value = false }
 }, {
+  label: 'المصروفات',
+  icon: 'i-lucide-receipt',
+  to: '/expenses',
+  onSelect: () => { open.value = false }
+}, {
   label: 'المستخدمون',
   icon: 'i-lucide-users',
   to: '/users',
@@ -56,7 +61,7 @@ const allLinks: NavigationMenuItem[] = [{
 }]
 
 // Supervisor+ routes hidden from staff
-const supervisorOnlyRoutes = ['/dashboard', '/accounting', '/gecmis', '/invoices']
+const supervisorOnlyRoutes = ['/dashboard', '/accounting', '/expenses', '/gecmis', '/invoices']
 // Admin-only routes
 const adminOnlyRoutes = ['/users']
 

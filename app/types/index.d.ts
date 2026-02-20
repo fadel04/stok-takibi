@@ -107,6 +107,12 @@ export interface Expense {
   createdAt?: string | null
 }
 
+export interface Category {
+  id: number
+  name: string
+  createdAt?: string | null
+}
+
 export type Period = 'daily' | 'weekly' | 'monthly'
 
 export interface Range {

@@ -2,16 +2,6 @@ import { db } from '../db'
 import { users } from '../db/schema'
 import { eq } from 'drizzle-orm'
 
-interface LoginUser {
-  id: number
-  email: string
-  password: string
-  name: string
-  username?: string | null
-  bio?: string | null
-  role: string
-}
-
 export default defineEventHandler(async (event) => {
   const method = event.node.req.method
 
@@ -69,6 +59,7 @@ export default defineEventHandler(async (event) => {
       email: body.email || existingUser.email,
       username: body.username || existingUser.username,
       bio: body.bio,
+      role: body.role || existingUser.role,
       password: body.password || existingUser.password
     }).where(eq(users.id, body.id))
 

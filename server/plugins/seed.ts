@@ -1,5 +1,5 @@
 import { db } from '../db'
-import { users } from '../db/schema'
+import { users, categories } from '../db/schema'
 import { eq } from 'drizzle-orm'
 
 const seedUsers = [
@@ -26,12 +26,22 @@ const seedUsers = [
   }
 ]
 
+const seedCategories = ['kış', 'yaz']
+
 export default defineNitroPlugin(async () => {
   for (const u of seedUsers) {
     const existing = await db.select().from(users).where(eq(users.email, u.email)).get()
     if (!existing) {
       await db.insert(users).values(u)
       console.log(`✅ تم إنشاء حساب: ${u.name} (${u.role})`)
+    }
+  }
+
+  for (const name of seedCategories) {
+    try {
+      await db.insert(categories).values({ name })
+    } catch {
+      // already exists
     }
   }
 })

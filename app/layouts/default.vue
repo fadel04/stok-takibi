@@ -2,7 +2,7 @@
 import type { NavigationMenuItem } from '@nuxt/ui'
 
 const toast = useToast()
-const { isSupervisorPlus } = useRole()
+const { isSupervisorPlus, isAdmin } = useRole()
 
 const open = ref(false)
 
@@ -17,6 +17,11 @@ const allLinks: NavigationMenuItem[] = [{
   to: '/products',
   onSelect: () => { open.value = false }
 }, {
+  label: 'نقطة البيع',
+  icon: 'i-lucide-scan-barcode',
+  to: '/cashier',
+  onSelect: () => { open.value = false }
+}, {
   label: 'المحاسبة',
   icon: 'i-lucide-calculator',
   to: '/accounting',
@@ -25,6 +30,11 @@ const allLinks: NavigationMenuItem[] = [{
   label: 'السجل',
   icon: 'i-lucide-history',
   to: '/gecmis',
+  onSelect: () => { open.value = false }
+}, {
+  label: 'المستخدمون',
+  icon: 'i-lucide-users',
+  to: '/users',
   onSelect: () => { open.value = false }
 }, {
   label: 'الإعدادات',
@@ -42,11 +52,16 @@ const allLinks: NavigationMenuItem[] = [{
 
 // Supervisor+ routes hidden from staff
 const supervisorOnlyRoutes = ['/dashboard', '/accounting', '/gecmis']
+// Admin-only routes
+const adminOnlyRoutes = ['/users']
 
 const visibleLinks = computed(() =>
-  isSupervisorPlus.value
-    ? allLinks
-    : allLinks.filter(l => !supervisorOnlyRoutes.includes(l.to as string))
+  allLinks.filter((l) => {
+    const path = l.to as string
+    if (adminOnlyRoutes.includes(path) && !isAdmin.value) return false
+    if (supervisorOnlyRoutes.includes(path) && !isSupervisorPlus.value) return false
+    return true
+  })
 )
 
 const groups = computed(() => [{

@@ -50,3 +50,9 @@ export const expenses = sqliteTable('expenses', {
   notes: text('notes'),
   createdAt: text('created_at').default('CURRENT_TIMESTAMP')
 })
+
+export const categories = sqliteTable('categories', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  name: text('name').notNull().unique(),
+  createdAt: text('created_at').default('CURRENT_TIMESTAMP')
+})

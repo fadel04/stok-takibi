@@ -13,14 +13,14 @@ const schema = z.object({
   description: z.string().optional(),
   price: z.number().min(0, 'لا يمكن أن يكون السعر أقل من 0'),
   stock: z.number().min(0, 'لا يمكن أن يكون المخزون أقل من 0'),
-  category: z.enum(['kış', 'yaz'], { message: 'اختر الفئة' }),
+  category: z.string({ message: 'اختر الفئة' }),
   size: z.string().optional(),
   barcode: z.string().optional()
 })
 
 type Schema = z.output<typeof schema>
 
-const state = reactive<Partial<Schema>>({
+const state = reactive<Partial<Schema> & { category?: string }>({
   name: '',
   description: '',
   price: 0,
@@ -34,6 +34,40 @@ const barcodeInput = ref('')
 const { threshold } = useLowStockThreshold()
 const { isAdmin, isSupervisorPlus } = useRole()
 
+// Categories
+interface Category { id: number; name: string }
+const { data: categoriesList, refresh: refreshCategories } = await useFetch<Category[]>('/api/categories', {
+  lazy: true,
+  default: () => []
+})
+const isCategoriesModalOpen = ref(false)
+const newCategoryName = ref('')
+const isCategoryLoading = ref(false)
+
+const addCategory = async () => {
+  if (!newCategoryName.value.trim()) return
+  isCategoryLoading.value = true
+  try {
+    await $fetch('/api/categories', { method: 'POST', body: { name: newCategoryName.value.trim() } })
+    newCategoryName.value = ''
+    await refreshCategories()
+  } catch (e: unknown) {
+    const err = e as { data?: { statusMessage?: string } }
+    toast.add({ title: err?.data?.statusMessage || 'حدث خطأ', color: 'error' })
+  } finally {
+    isCategoryLoading.value = false
+  }
+}
+
+const deleteCategory = async (id: number) => {
+  try {
+    await $fetch('/api/categories', { method: 'DELETE', body: { id } })
+    await refreshCategories()
+  } catch {
+    toast.add({ title: 'حدث خطأ أثناء الحذف', color: 'error' })
+  }
+}
+
 const isAddModalOpen = ref(false)
 const isEditModalOpen = ref(false)
 const isStockOutModalOpen = ref(false)
@@ -41,18 +75,12 @@ const selectedProduct = ref<Product | null>(null)
 const stockOutQuantity = ref(1)
 const isLoading = ref(false)
 const searchQuery = ref('')
-const selectedSeason = ref<'all' | 'kış' | 'yaz'>('all')
+const selectedSeason = ref<string>('all')
 
-const seasonTabs = [{
-  label: 'الكل',
-  value: 'all'
-}, {
-  label: 'شتاء',
-  value: 'kış'
-}, {
-  label: 'صيف',
-  value: 'yaz'
-}]
+const seasonTabs = computed(() => [
+  { label: 'الكل', value: 'all' },
+  ...(categoriesList.value?.map(c => ({ label: c.name, value: c.name })) ?? [])
+])
 
 const { data: products, refresh } = await useFetch<Product[]>('/api/products', {
   key: 'products',
@@ -181,7 +209,7 @@ function openEditModal(product: Product) {
   state.description = product.description
   state.price = product.price
   state.stock = product.stock
-  state.category = product.category as 'kış' | 'yaz' | undefined
+  state.category = product.category
   state.size = product.size || ''
   state.barcode = product.barcode || ''
   isEditModalOpen.value = true
@@ -493,6 +521,15 @@ function resetForm() {
 
         <template #right>
           <UButton
+            v-if="isAdmin"
+            icon="i-lucide-tags"
+            color="neutral"
+            variant="outline"
+            @click="isCategoriesModalOpen = true"
+          >
+            إدارة الفئات
+          </UButton>
+          <UButton
             v-if="isSupervisorPlus"
             label="إضافة منتج"
             icon="i-lucide-plus"
@@ -612,15 +649,14 @@ function resetForm() {
               </UFormField>
 
               <UFormField label="الفئة" name="category">
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2">
                   <UButton
-                    v-for="cat in [{ label: 'شتاء', value: 'kış' }, { label: 'صيف', value: 'yaz' }] as const"
-                    :key="cat.value"
-                    :label="cat.label"
-                    :color="state.category === cat.value ? 'primary' : 'neutral'"
-                    :variant="state.category === cat.value ? 'solid' : 'outline'"
-                    block
-                    @click="state.category = cat.value"
+                    v-for="cat in categoriesList"
+                    :key="cat.id"
+                    :label="cat.name"
+                    :color="state.category === cat.name ? 'primary' : 'neutral'"
+                    :variant="state.category === cat.name ? 'solid' : 'outline'"
+                    @click="state.category = cat.name"
                   />
                 </div>
               </UFormField>
@@ -794,15 +830,14 @@ function resetForm() {
               </UFormField>
 
               <UFormField label="الفئة" name="category">
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2">
                   <UButton
-                    v-for="cat in [{ label: 'شتاء', value: 'kış' }, { label: 'صيف', value: 'yaz' }] as const"
-                    :key="cat.value"
-                    :label="cat.label"
-                    :color="state.category === cat.value ? 'primary' : 'neutral'"
-                    :variant="state.category === cat.value ? 'solid' : 'outline'"
-                    block
-                    @click="state.category = cat.value"
+                    v-for="cat in categoriesList"
+                    :key="cat.id"
+                    :label="cat.name"
+                    :color="state.category === cat.name ? 'primary' : 'neutral'"
+                    :variant="state.category === cat.name ? 'solid' : 'outline'"
+                    @click="state.category = cat.name"
                   />
                 </div>
               </UFormField>
@@ -847,6 +882,48 @@ function resetForm() {
       </div>
     </Transition>
   </Teleport>
+
+  <!-- إدارة الفئات Modal -->
+  <UModal v-model:open="isCategoriesModalOpen" title="إدارة الفئات">
+    <template #body>
+      <div class="space-y-4">
+        <div class="flex gap-2">
+          <UInput
+            v-model="newCategoryName"
+            placeholder="اسم الفئة الجديدة..."
+            class="flex-1"
+            @keydown.enter="addCategory"
+          />
+          <UButton
+            icon="i-lucide-plus"
+            :loading="isCategoryLoading"
+            @click="addCategory"
+          >
+            إضافة
+          </UButton>
+        </div>
+        <div class="space-y-2">
+          <div
+            v-for="cat in categoriesList"
+            :key="cat.id"
+            class="flex items-center justify-between px-3 py-2 rounded-lg border border-default"
+          >
+            <span class="font-medium text-sm">{{ cat.name }}</span>
+            <UButton
+              icon="i-lucide-trash-2"
+              size="xs"
+              color="error"
+              variant="ghost"
+              @click="deleteCategory(cat.id)"
+            />
+          </div>
+          <p v-if="!categoriesList?.length" class="text-sm text-muted text-center py-4">
+            لا توجد فئات
+          </p>
+        </div>
+      </div>
+    </template>
+  </UModal>
 </template>
 
 <style scoped>

@@ -4,7 +4,7 @@ import type { Transaction } from '~/types'
 
 const searchQuery = ref('')
 const activeTab = ref<'all' | 'inputs' | 'outputs'>('all')
-const selectedCategory = ref<'all' | 'kış' | 'yaz'>('all')
+const selectedCategory = ref<string>('all')
 
 const tabs = [{
   label: 'الكل',
@@ -20,16 +20,35 @@ const tabs = [{
   icon: 'i-lucide-package-minus'
 }]
 
-const categoryTabs = [{
-  label: 'الكل',
-  value: 'all'
-}, {
-  label: 'شتاء',
-  value: 'kış'
-}, {
-  label: 'صيف',
-  value: 'yaz'
-}]
+const { data: categoriesList } = await useFetch<{ id: number, name: string }[]>('/api/categories', {
+  lazy: true,
+  default: () => []
+})
+
+const categoryTabs = computed(() => [
+  { label: 'الكل', value: 'all' },
+  ...(categoriesList.value?.map(c => ({ label: c.name, value: c.name })) ?? [])
+])
+
+const { isAdmin } = useRole()
+const isClearModalOpen = ref(false)
+const isClearing = ref(false)
+
+const clearTransactions = async () => {
+  isClearing.value = true
+  try {
+    await $fetch('/api/transactions/clear', { method: 'DELETE' })
+    await refresh()
+    isClearModalOpen.value = false
+    toast.add({ title: 'تم تصفير السجل بنجاح', color: 'success' })
+  } catch {
+    toast.add({ title: 'حدث خطأ أثناء التصفير', color: 'error' })
+  } finally {
+    isClearing.value = false
+  }
+}
+
+const toast = useToast()
 
 const { data: transactions, refresh, status } = await useFetch<Transaction[]>('/api/transactions', {
   lazy: true,
@@ -117,15 +136,14 @@ const extractProductCategory = (description: string): string => {
   )
 
   if (product && product.category) {
-    return product.category.toLowerCase()
+    return product.category
   }
 
-  if (/kış/i.test(description)) {
-    return 'kış'
-  }
-  if (/yaz/i.test(description)) {
-    return 'yaz'
-  }
+  // Fallback: check if any known category name appears in description
+  const matchedCategory = categoriesList.value?.find(c =>
+    new RegExp(c.name, 'i').test(description)
+  )
+  if (matchedCategory) return matchedCategory.name
 
   return ''
 }
@@ -159,9 +177,7 @@ const printReport = () => {
 
   const categoryName = selectedCategory.value === 'all'
     ? 'الكل'
-    : selectedCategory.value === 'kış'
-      ? 'شتاء'
-      : 'صيف'
+    : selectedCategory.value
 
   const htmlContent = `<!DOCTYPE html>
 <html>
@@ -315,6 +331,15 @@ definePageMeta({
             >
               تحديث
             </UButton>
+            <UButton
+              v-if="isAdmin"
+              icon="i-lucide-trash-2"
+              color="error"
+              variant="outline"
+              @click="isClearModalOpen = true"
+            >
+              تصفير السجل
+            </UButton>
           </div>
         </template>
       </UDashboardNavbar>
@@ -448,4 +473,16 @@ definePageMeta({
       </div>
     </template>
   </UDashboardPanel>
+
+  <UModal v-model:open="isClearModalOpen" title="تصفير السجل">
+    <template #body>
+      <p class="text-sm text-muted mb-4">
+        هل أنت متأكد من حذف جميع سجلات العمليات؟ لا يمكن التراجع عن هذا الإجراء.
+      </p>
+      <div class="flex justify-end gap-2">
+        <UButton color="neutral" variant="outline" @click="isClearModalOpen = false">إلغاء</UButton>
+        <UButton color="error" :loading="isClearing" @click="clearTransactions">تصفير</UButton>
+      </div>
+    </template>
+  </UModal>
 </template>

@@ -3,6 +3,9 @@ export default defineAppConfig({
     colors: {
       primary: 'green',
       neutral: 'zinc'
+    },
+    navigationMenu: {
+      link: 'rtl:flex-row-reverse'
     }
   }
 })

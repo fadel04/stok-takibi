@@ -1,8 +1,11 @@
+import type { UserRole } from '~/types'
+
 export const useCurrentUser = () => {
   const currentUser = ref<{
     id: number
     email: string
     name: string
+    role: UserRole
     avatar?: {
       src: string
       alt: string

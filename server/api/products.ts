@@ -10,6 +10,7 @@ interface Product {
   stock: number
   category: string | null
   size?: string | null
+  barcode?: string | null
   createdAt: string | null
 }
 
@@ -35,6 +36,7 @@ export default defineEventHandler(async (event) => {
       stock: body.stock,
       category: body.category,
       size: body.size,
+      barcode: body.barcode,
       createdAt: new Date().toISOString().split('T')[0]
     }).returning()
 
@@ -58,7 +60,8 @@ export default defineEventHandler(async (event) => {
       price: body.price,
       stock: body.stock,
       category: body.category,
-      size: body.size
+      size: body.size,
+      barcode: body.barcode
     }).where(eq(products.id, body.id))
 
     const updated = await db.select().from(products).where(eq(products.id, body.id)).get()

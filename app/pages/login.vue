@@ -43,6 +43,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         id: user.id,
         email: user.email,
         name: user.name,
+        role: user.role ?? 'staff',
         avatar: user.avatar?.src ? { src: user.avatar.src, alt: user.avatar.alt || user.name } : undefined
       })
 
@@ -53,7 +54,9 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         color: 'success'
       })
 
-      await router.push('/dashboard')
+      // Staff goes directly to products page
+      const destination = user.role === 'staff' ? '/products' : '/dashboard'
+      await router.push(destination)
     }
   } catch (error: unknown) {
     toast.add({

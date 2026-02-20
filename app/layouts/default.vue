@@ -2,44 +2,30 @@
 import type { NavigationMenuItem } from '@nuxt/ui'
 
 const toast = useToast()
+const { isSupervisorPlus } = useRole()
 
 const open = ref(false)
 
-const links = [[{
+const allLinks: NavigationMenuItem[] = [{
   label: 'لوحة التحكم',
   icon: 'i-lucide-house',
   to: '/dashboard',
-  onSelect: () => {
-    open.value = false
-  }
+  onSelect: () => { open.value = false }
 }, {
   label: 'المنتجات',
   icon: 'i-lucide-package',
   to: '/products',
-  onSelect: () => {
-    open.value = false
-  }
-// }, {
-//   label: 'الفواتير',
-//   icon: 'i-lucide-file-text',
-//   to: '/invoices',
-//   onSelect: () => {
-//     open.value = false
-//   }
+  onSelect: () => { open.value = false }
 }, {
   label: 'المحاسبة',
   icon: 'i-lucide-calculator',
   to: '/accounting',
-  onSelect: () => {
-    open.value = false
-  }
+  onSelect: () => { open.value = false }
 }, {
   label: 'السجل',
   icon: 'i-lucide-history',
   to: '/gecmis',
-  onSelect: () => {
-    open.value = false
-  }
+  onSelect: () => { open.value = false }
 }, {
   label: 'الإعدادات',
   to: '/settings',
@@ -50,37 +36,23 @@ const links = [[{
     label: 'عام',
     to: '/settings',
     exact: true,
-    onSelect: () => {
-      open.value = false
-    }
-    // }, {
-
-  //   label: 'الأمان',
-  //   to: '/settings/security',
-  //   onSelect: () => {
-  //     open.value = false
-  //   }
+    onSelect: () => { open.value = false }
   }]
 }]
-// [
-//   {
-//   label: 'Geri Bildirim',
-//   icon: 'i-lucide-message-circle',
-//   to: 'https://github.com/nuxt-ui-templates/dashboard',
-//   target: '_blank'
-//   }, {
-//   label: 'المساعدة والدعم',
-//   icon: 'i-lucide-info',
-//   to: 'https://github.com/nuxt-ui-templates/dashboard',
-//   target: '_blank'
-// }
-// ]
-] satisfies NavigationMenuItem[][]
+
+// Supervisor+ routes hidden from staff
+const supervisorOnlyRoutes = ['/dashboard', '/accounting', '/gecmis']
+
+const visibleLinks = computed(() =>
+  isSupervisorPlus.value
+    ? allLinks
+    : allLinks.filter(l => !supervisorOnlyRoutes.includes(l.to as string))
+)
 
 const groups = computed(() => [{
   id: 'links',
   label: 'الصفحات',
-  items: links.flat()
+  items: visibleLinks.value
 }])
 
 onMounted(async () => {
@@ -128,7 +100,7 @@ onMounted(async () => {
 
         <UNavigationMenu
           :collapsed="collapsed"
-          :items="links[0]"
+          :items="visibleLinks"
           orientation="vertical"
           tooltip
           popover

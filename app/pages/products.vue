@@ -14,7 +14,8 @@ const schema = z.object({
   price: z.number().min(0, 'لا يمكن أن يكون السعر أقل من 0'),
   stock: z.number().min(0, 'لا يمكن أن يكون المخزون أقل من 0'),
   category: z.enum(['kış', 'yaz'], { message: 'اختر الفئة' }),
-  size: z.string().optional()
+  size: z.string().optional(),
+  barcode: z.string().optional()
 })
 
 type Schema = z.output<typeof schema>
@@ -25,8 +26,13 @@ const state = reactive<Partial<Schema>>({
   price: 0,
   stock: 0,
   category: undefined,
-  size: ''
+  size: '',
+  barcode: ''
 })
+
+const barcodeInput = ref('')
+const { threshold } = useLowStockThreshold()
+const { isAdmin, isSupervisorPlus } = useRole()
 
 const isAddModalOpen = ref(false)
 const isEditModalOpen = ref(false)
@@ -78,6 +84,11 @@ const columns: TableColumn<Product>[] = [
     cell: ({ row }) => row.original.description
   },
   {
+    accessorKey: 'barcode',
+    header: 'الباركود',
+    cell: ({ row }) => row.original.barcode || '-'
+  },
+  {
     accessorKey: 'size',
     header: 'المقاس',
     cell: ({ row }) => row.original.size || '-'
@@ -117,20 +128,29 @@ const columns: TableColumn<Product>[] = [
     header: 'الإجراءات',
     cell: ({ row }) => {
       const UButton = resolveComponent('UButton')
-      return h('div', { class: 'flex gap-2' }, [
-        h(UButton, {
+      const buttons = []
+
+      // Edit: supervisor and admin only
+      if (isSupervisorPlus.value) {
+        buttons.push(h(UButton, {
           icon: 'i-lucide-edit',
           color: 'blue',
           variant: 'ghost',
           onClick: () => openEditModal(row.original)
-        }),
-        h(UButton, {
+        }))
+      }
+
+      // Delete: admin only
+      if (isAdmin.value) {
+        buttons.push(h(UButton, {
           icon: 'i-lucide-trash',
           color: 'error',
           variant: 'ghost',
           onClick: () => deleteProduct(row.original.id)
-        })
-      ])
+        }))
+      }
+
+      return h('div', { class: 'flex gap-2' }, buttons)
     }
   }
 ]
@@ -143,7 +163,35 @@ function openEditModal(product: Product) {
   state.stock = product.stock
   state.category = product.category as 'kış' | 'yaz' | undefined
   state.size = product.size || ''
+  state.barcode = product.barcode || ''
   isEditModalOpen.value = true
+}
+
+function handleScan(code: string) {
+  const found = products.value?.find(p => p.barcode === code)
+  barcodeInput.value = ''
+
+  if (found) {
+    openStockOutModal(found)
+  } else {
+    toast.add({
+      title: 'لم يتم العثور على منتج',
+      description: `لا يوجد منتج بالباركود: ${code}`,
+      icon: 'i-lucide-scan-line',
+      color: 'warning'
+    })
+  }
+}
+
+// Global scanner: works anywhere on the page without clicking the field
+useBarcodeScanner(handleScan, (buf) => {
+  barcodeInput.value = buf
+})
+
+// Manual input handler (for typing in the barcode field directly)
+function onManualBarcode() {
+  const code = barcodeInput.value.trim()
+  if (code) handleScan(code)
 }
 
 function openAddModal() {
@@ -195,6 +243,7 @@ async function submitStockOut() {
         description: product.description,
         price: product.price,
         stock: newStock,
+        barcode: product.barcode,
         createdAt: product.createdAt
       }
     })
@@ -243,6 +292,7 @@ async function _updateStock(id: number, change: number) {
         description: product.description,
         price: product.price,
         stock: newStock,
+        barcode: product.barcode,
         createdAt: product.createdAt
       }
     })
@@ -408,6 +458,7 @@ function resetForm() {
   state.stock = 0
   state.category = undefined
   state.size = ''
+  state.barcode = ''
   selectedProduct.value = null
 }
 </script>
@@ -422,6 +473,7 @@ function resetForm() {
 
         <template #right>
           <UButton
+            v-if="isSupervisorPlus"
             label="إضافة منتج"
             icon="i-lucide-plus"
             @click="openAddModal"
@@ -442,9 +494,28 @@ function resetForm() {
               @click="selectedSeason = tab.value as any"
             />
           </div>
+
+          <UInput
+            ref="barcodeInputRef"
+            v-model="barcodeInput"
+            icon="i-lucide-scan-line"
+            placeholder="امسح الباركود هنا..."
+            class="w-56"
+            data-barcode-input
+            @keydown.enter.prevent="onManualBarcode"
+          />
         </template>
 
         <template #right>
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">حد التنبيه:</span>
+            <UInput
+              v-model.number="threshold"
+              type="number"
+              min="1"
+              class="w-20"
+            />
+          </div>
           <UInput
             v-model="searchQuery"
             icon="i-lucide-search"
@@ -457,6 +528,7 @@ function resetForm() {
 
     <template #body>
       <div v-if="products" class="space-y-4">
+        <HomeLowStockAlert />
         <UTable
           ref="table"
           :data="filteredProducts"
@@ -514,6 +586,10 @@ function resetForm() {
                   <UInput v-model="state.size" placeholder="مثال: S, M, L, XL" />
                 </UFormField>
               </div>
+
+              <UFormField label="الباركود" name="barcode">
+                <UInput v-model="state.barcode" icon="i-lucide-scan-line" placeholder="امسح الباركود أو أدخله يدوياً" />
+              </UFormField>
 
               <UFormField label="الفئة" name="category">
                 <div class="flex gap-2">
@@ -688,6 +764,10 @@ function resetForm() {
                   <UInput v-model="state.size" placeholder="مثال: S, M, L, XL" />
                 </UFormField>
               </div>
+
+              <UFormField label="الباركود" name="barcode">
+                <UInput v-model="state.barcode" icon="i-lucide-scan-line" placeholder="امسح الباركود أو أدخله يدوياً" />
+              </UFormField>
 
               <UFormField label="الوصف" name="description">
                 <UTextarea v-model="state.description" placeholder="أدخل وصف المنتج" :rows="3" />

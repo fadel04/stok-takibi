@@ -12,6 +12,8 @@ export interface User {
   location: string
 }
 
+export type UserRole = 'admin' | 'supervisor' | 'staff'
+
 export interface LoginUser {
   id: number
   email: string
@@ -19,6 +21,7 @@ export interface LoginUser {
   name: string
   username?: string
   bio?: string
+  role: UserRole
   avatar?: AvatarProps
 }
 
@@ -30,6 +33,7 @@ export interface Product {
   stock: number
   category: string
   size?: string
+  barcode?: string
   createdAt: string
 }
 

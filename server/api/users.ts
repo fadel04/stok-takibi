@@ -9,6 +9,7 @@ interface LoginUser {
   name: string
   username?: string | null
   bio?: string | null
+  role: string
 }
 
 export default defineEventHandler(async (event) => {
@@ -20,7 +21,8 @@ export default defineEventHandler(async (event) => {
       email: users.email,
       name: users.name,
       username: users.username,
-      bio: users.bio
+      bio: users.bio,
+      role: users.role
     }).from(users)
 
     return allUsers

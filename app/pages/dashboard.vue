@@ -29,6 +29,7 @@ const period = ref<Period>('daily')
     </template>
 
     <template #body>
+      <HomeLowStockAlert />
       <HomeStats :period="period" :range="range" />
       <HomeChart :period="period" :range="range" />
       <HomeSales :period="period" :range="range" />

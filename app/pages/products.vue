@@ -55,8 +55,15 @@ const seasonTabs = [{
 }]
 
 const { data: products, refresh } = await useFetch<Product[]>('/api/products', {
+  key: 'products',
   lazy: true
 })
+
+// Watch URL query param - handles both first load and navigation between products
+const route = useRoute()
+watch(() => route.query.q, (q) => {
+  searchQuery.value = (q as string) || ''
+}, { immediate: true })
 
 const filteredProducts = computed(() => {
   if (!products.value) return []
@@ -103,8 +110,21 @@ const columns: TableColumn<Product>[] = [
     header: 'المخزون',
     cell: ({ row }) => {
       const stock = row.original.stock
-      const color = stock > 20 ? 'success' : stock > 10 ? 'warning' : 'error'
-      return h('span', { class: `text-${color}-500 font-semibold text-lg` }, `${stock}`)
+      const UIcon = resolveComponent('UIcon')
+
+      if (stock === 0) {
+        return h('div', { class: 'flex items-center gap-1' }, [
+          h(UIcon, { name: 'i-lucide-package-x', class: 'size-4 text-red-500' }),
+          h('span', { class: 'text-red-500 font-semibold text-lg' }, `${stock}`)
+        ])
+      }
+      if (stock <= threshold.value) {
+        return h('div', { class: 'flex items-center gap-1' }, [
+          h(UIcon, { name: 'i-lucide-alert-triangle', class: 'size-4 text-yellow-500' }),
+          h('span', { class: 'text-yellow-500 font-semibold text-lg' }, `${stock}`)
+        ])
+      }
+      return h('span', { class: 'text-green-500 font-semibold text-lg' }, `${stock}`)
     }
   },
   {

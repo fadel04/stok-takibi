@@ -14,6 +14,8 @@ const cart = ref<CartItem[]>([])
 const manualBarcode = ref('')
 const isCheckingOut = ref(false)
 const lastScanned = ref<Product | null>(null)
+const isCheckoutModalOpen = ref(false)
+const customerName = ref('')
 
 const { data: products, refresh: refreshProducts } = await useFetch<Product[]>('/api/products', {
   key: 'products',
@@ -61,6 +63,15 @@ const handleManualScan = () => {
   manualBarcode.value = ''
 }
 
+let scanDebounce: ReturnType<typeof setTimeout> | null = null
+watch(manualBarcode, (val) => {
+  if (!val.trim()) return
+  if (scanDebounce) clearTimeout(scanDebounce)
+  scanDebounce = setTimeout(() => {
+    handleManualScan()
+  }, 400)
+})
+
 const removeFromCart = (id: number) => {
   cart.value = cart.value.filter(i => i.product.id !== id)
 }
@@ -78,6 +89,19 @@ const decrement = (item: CartItem) => {
   else removeFromCart(item.product.id)
 }
 
+const setQuantity = (item: CartItem, val: number) => {
+  if (!val || val < 1) {
+    item.quantity = 1
+    return
+  }
+  if (val > item.product.stock) {
+    toast.add({ title: 'المخزون غير كافٍ', color: 'error' })
+    item.quantity = item.product.stock
+    return
+  }
+  item.quantity = val
+}
+
 const total = computed(() =>
   cart.value.reduce((s, i) => s + i.product.price * i.quantity, 0)
 )
@@ -87,9 +111,16 @@ const clearCart = () => {
   lastScanned.value = null
 }
 
+const openCheckout = () => {
+  if (!cart.value.length) return
+  customerName.value = ''
+  isCheckoutModalOpen.value = true
+}
+
 const checkout = async () => {
   if (!cart.value.length) return
   isCheckingOut.value = true
+  isCheckoutModalOpen.value = false
   try {
     for (const item of cart.value) {
       const newStock = item.product.stock - item.quantity
@@ -112,6 +143,30 @@ const checkout = async () => {
         `${item.product.name}: ${item.product.stock} → ${newStock} (-${item.quantity})`
       )
     }
+
+    // إنشاء فاتورة تلقائياً
+    await $fetch('/api/invoices', {
+      method: 'POST',
+      body: {
+        customerName: customerName.value.trim() || 'عميل نقطة البيع',
+        customerPhone: null,
+        customerEmail: null,
+        totalAmount: total.value,
+        status: 'paid',
+        items: cart.value.map(i => ({
+          description: i.product.name,
+          quantity: i.quantity,
+          unitPrice: i.product.price,
+          total: +(i.product.price * i.quantity).toFixed(2)
+        }))
+      }
+    })
+    await logTransaction(
+      currentUser.value?.name || 'كاشير',
+      'إنشاء فاتورة',
+      `فاتورة مدفوعة - ${customerName.value.trim() || 'عميل نقطة البيع'} - ${total.value.toFixed(2)} MRU`
+    )
+
     await refreshNuxtData('products')
     await refreshProducts()
     toast.add({
@@ -245,23 +300,16 @@ useSeoMeta({ title: 'نقطة البيع' })
                     <p class="font-medium truncate">{{ item.product.name }}</p>
                     <p class="text-xs text-muted">{{ item.product.price.toFixed(2) }} MRU × {{ item.quantity }}</p>
                   </div>
-                  <div class="flex items-center gap-1">
-                    <UButton
-                      icon="i-lucide-minus"
-                      size="xs"
-                      color="neutral"
-                      variant="outline"
-                      @click="decrement(item)"
-                    />
-                    <span class="w-8 text-center font-semibold text-sm">{{ item.quantity }}</span>
-                    <UButton
-                      icon="i-lucide-plus"
-                      size="xs"
-                      color="neutral"
-                      variant="outline"
-                      @click="increment(item)"
-                    />
-                  </div>
+                  <UInput
+                    :model-value="item.quantity"
+                    type="number"
+                    min="1"
+                    :max="item.product.stock"
+                    size="xs"
+                    class="w-24 text-center"
+                    :ui="{ base: 'text-center' }"
+                    @update:model-value="(v) => setQuantity(item, Number(v))"
+                  />
                   <p class="w-20 text-right font-semibold text-sm">
                     {{ (item.product.price * item.quantity).toFixed(2) }}
                   </p>
@@ -288,7 +336,7 @@ useSeoMeta({ title: 'نقطة البيع' })
                 icon="i-lucide-check-circle"
                 :loading="isCheckingOut"
                 :disabled="!cart.length"
-                @click="checkout"
+                @click="openCheckout"
               >
                 تأكيد البيع
               </UButton>
@@ -298,4 +346,43 @@ useSeoMeta({ title: 'نقطة البيع' })
       </div>
     </template>
   </UDashboardPanel>
+
+  <!-- نافذة تأكيد البيع -->
+  <UModal v-model:open="isCheckoutModalOpen" title="تأكيد البيع">
+    <template #body>
+      <div class="space-y-4">
+        <UFormField label="اسم العميل (اختياري)">
+          <UInput
+            v-model="customerName"
+            placeholder="عميل نقطة البيع"
+            class="w-full"
+            autofocus
+          />
+        </UFormField>
+
+        <div class="rounded-lg border border-default divide-y divide-default text-sm">
+          <div
+            v-for="item in cart"
+            :key="item.product.id"
+            class="flex items-center justify-between px-3 py-2"
+          >
+            <span>{{ item.product.name }} × {{ item.quantity }}</span>
+            <span class="font-semibold">{{ (item.product.price * item.quantity).toFixed(2) }} MRU</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between font-bold text-lg pt-1">
+          <span>الإجمالي</span>
+          <span class="text-primary">{{ total.toFixed(2) }} MRU</span>
+        </div>
+
+        <p class="text-xs text-muted">سيتم إنشاء فاتورة مدفوعة تلقائياً</p>
+
+        <div class="flex justify-end gap-2 pt-1">
+          <UButton color="neutral" variant="outline" @click="isCheckoutModalOpen = false">إلغاء</UButton>
+          <UButton icon="i-lucide-check-circle" :loading="isCheckingOut" @click="checkout">تأكيد البيع</UButton>
+        </div>
+      </div>
+    </template>
+  </UModal>
 </template>

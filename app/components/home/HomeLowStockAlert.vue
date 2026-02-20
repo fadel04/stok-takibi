@@ -56,7 +56,7 @@ const lowStock = computed(() =>
           color="warning"
           variant="soft"
           size="xs"
-          trailing-icon="i-lucide-arrow-left"
+          trailing-icon="i-lucide-arrow-right"
           :label="`${p.name} — ${p.stock} قطعة`"
         />
       </div>
